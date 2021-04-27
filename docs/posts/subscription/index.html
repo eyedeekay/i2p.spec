@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="generator" content="Hugo 0.83.0-DEV" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/i2p.spec/css/style.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
+<link rel="alternate" href="/i2p.spec/index.xml" type="application/rss+xml" title="I2P Specifications">
+<title>Subscription - I2P Specifications</title>
+</head>
+<body>
+
+<header>
+  <div class="container clearfix">
+    <a class="path" href="https://eyedeekay.github.io/i2p.spec/">[I2P Specifications]</a>
+    <span class="caret"># _</span>
+    <div class="right">
+      
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+
+<main role="main" class="article">
+  
+<article class="single" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2021-04-27">April 27, 2021</time></span>
+
+
+
+  </div>
+  <h1 class="headline" itemprop="headline">Subscription</h1>
+  <section class="body" itemprop="articleBody">
+    <h1 id="addressbook-subscription-feed-commands">Addressbook Subscription Feed Commands</h1>
+<p>Last updated: 2021-01 Accurate for: 0.9.49</p>
+<h2 id="overview">Overview</h2>
+<p>This specification extends the address subscription feed with commands,
+to enable name servers to broadcast entry updates from hostname holders.
+Implemented in 0.9.26, originally proposed in proposal 112.</p>
+<h2 id="motivation">Motivation</h2>
+<p>Previously, the hosts.txt subscription servers just sent data in a
+hosts.txt format, which is as follows:</p>
+<pre><code>example.i2p=b64destination
+</code></pre>
+<p>There are several problems with this:</p>
+<ul>
+<li>Hostname holders cannot update the Destination associated with their
+hostnames (in order to e.g. upgrade the signing key to a stronger
+type).</li>
+<li>Hostname holders cannot relinquish their hostnames arbitrarily; they
+must give the corresponding Destination private keys directly to the
+new holder.</li>
+<li>There is no way to authenticate that a subdomain is controlled by
+the corresponding base hostname; this is currently only enforced
+individually by some name servers.</li>
+</ul>
+<h2 id="design">Design</h2>
+<p>This specification adds a number of command lines to the hosts.txt
+format. With these commands, name servers can extend their services to
+provide a number of additional features. Clients that implement this
+specification will be able to listen for these features through the
+regular subscription process.</p>
+<p>All command lines must be signed by the corresponding Destination. This
+ensures that changes are only made at the request of the hostname
+holder.</p>
+<h2 id="security-implications">Security implications</h2>
+<p>This specification does not affect anonymity.</p>
+<p>There is an increase in the risk associated with losing control of a
+Destination key, as someone who obtains it can use these commands to
+make changes to any associated hostnames. But this is no more of a
+problem than the status quo, where someone who obtains a Destination can
+impersonate a hostname and (partially) take over its traffic. The
+increased risk is also balanced our by giving hostname holders the
+ability to change the Destination associated with a hostname, in the
+event that they believe the Destination has been compromised; this is
+impossible with the current system.</p>
+<h2 id="specification">Specification</h2>
+<h3 id="new-line-types">New line types</h3>
+<p>There are two new types of lines:</p>
+<ol>
+<li>
+<p>Add and Change commands:</p>
+<pre><code>example.i2p=b64destination#!key1=val1#key2=val2 ...
+</code></pre>
+</li>
+<li>
+<p>Remove commands:</p>
+<pre><code>#!key1=val1#key2=val2 ...
+</code></pre>
+</li>
+</ol>
+<h4 id="ordering">Ordering</h4>
+<p>A feed is not necessarily in-order or complete. For example, a change
+command may be on a line before an add command, or without an add
+command.</p>
+<p>Keys may be in any order. Duplicate keys are not allowed. All keys and
+values are case-sensitive.</p>
+<h3 id="common-keys">Common keys</h3>
+<p>Required in all commands:</p>
+<dl>
+<dt>sig</dt>
+<dd>
+<p>B64 signature, using signing key from the destination</p>
+</dd>
+</dl>
+<p>References to a second hostname and/or destination:</p>
+<dl>
+<dt>oldname</dt>
+<dd>
+<p>A second hostname (new or changed)</p>
+</dd>
+<dt>olddest</dt>
+<dd>
+<p>A second b64 destination (new or changed)</p>
+</dd>
+<dt>oldsig</dt>
+<dd>
+<p>A second b64 signature, using signing key from nolddest</p>
+</dd>
+</dl>
+<p>Other common keys:</p>
+<dl>
+<dt>action</dt>
+<dd>
+<p>A command</p>
+</dd>
+<dt>name</dt>
+<dd>
+<p>The hostname, only present if not preceded by example.i2p=b64dest</p>
+</dd>
+<dt>dest</dt>
+<dd>
+<p>The b64 destination, only present if not preceded by
+example.i2p=b64dest</p>
+</dd>
+<dt>date</dt>
+<dd>
+<p>In seconds since epoch</p>
+</dd>
+<dt>expires</dt>
+<dd>
+<p>In seconds since epoch</p>
+</dd>
+</dl>
+<h3 id="commands">Commands</h3>
+<p>All commands except the &quot;Add&quot; command must contain an
+&quot;action=command&quot; key/value.</p>
+<p>For compatibility with older clients, most commands are preceded by
+example.i2p=b64dest, as noted below. For changes, these are always the
+new values. Any old values are included in the key/value section.</p>
+<p>Listed keys are required. All commands may contain additional key/value
+items not defined here.</p>
+<h4 id="add-hostname">Add hostname</h4>
+<dl>
+<dt>Preceded by example.i2p=b64dest</dt>
+<dd>
+<p>YES, this is the new host name and destination.</p>
+</dd>
+<dt>action</dt>
+<dd>
+<p>NOT included, it is implied.</p>
+</dd>
+<dt>sig</dt>
+<dd>
+<p>signature</p>
+</dd>
+</dl>
+<p>Example:</p>
+<pre><code>example.i2p=b64dest#!sig=b64sig
+</code></pre>
+<h4 id="change-hostname">Change hostname</h4>
+<dl>
+<dt>Preceded by example.i2p=b64dest</dt>
+<dd>
+<p>YES, this is the new host name and old destination.</p>
+</dd>
+<dt>action</dt>
+<dd>
+<p>changename</p>
+</dd>
+<dt>oldname</dt>
+<dd>
+<p>the old hostname, to be replaced</p>
+</dd>
+<dt>sig</dt>
+<dd>
+<p>signature</p>
+</dd>
+</dl>
+<p>Example:</p>
+<pre><code>example.i2p=b64dest#!action=changename#oldname=oldhostname#sig=b64sig
+</code></pre>
+<h4 id="change-destination">Change destination</h4>
+<dl>
+<dt>Preceded by example.i2p=b64dest</dt>
+<dd>
+<p>YES, this is the old host name and new destination.</p>
+</dd>
+<dt>action</dt>
+<dd>
+<p>changedest</p>
+</dd>
+<dt>olddest</dt>
+<dd>
+<p>the old dest, to be replaced</p>
+</dd>
+<dt>oldsig</dt>
+<dd>
+<p>signature using olddest</p>
+</dd>
+<dt>sig</dt>
+<dd>
+<p>signature</p>
+</dd>
+</dl>
+<p>Example:</p>
+<pre><code>example.i2p=b64dest#!action=changedest#olddest=oldb64dest#oldsig=b64sig#sig=b64sig
+</code></pre>
+<h4 id="add-hostname-alias">Add hostname alias</h4>
+<dl>
+<dt>Preceded by example.i2p=b64dest</dt>
+<dd>
+<p>YES, this is the new (alias) host name and old destination.</p>
+</dd>
+<dt>action</dt>
+<dd>
+<p>addname</p>
+</dd>
+<dt>oldname</dt>
+<dd>
+<p>the old hostname</p>
+</dd>
+<dt>sig</dt>
+<dd>
+<p>signature</p>
+</dd>
+</dl>
+<p>Example:</p>
+<pre><code>example.i2p=b64dest#!action=addname#oldname=oldhostname#sig=b64sig
+</code></pre>
+<h4 id="add-destination-alias">Add destination alias</h4>
+<p>(Used for crypto upgrade)</p>
+<dl>
+<dt>Preceded by example.i2p=b64dest</dt>
+<dd>
+<p>YES, this is the old host name and new (alternate) destination.</p>
+</dd>
+<dt>action</dt>
+<dd>
+<p>adddest</p>
+</dd>
+<dt>olddest</dt>
+<dd>
+<p>the old dest</p>
+</dd>
+<dt>oldsig</dt>
+<dd>
+<p>signature using olddest</p>
+</dd>
+<dt>sig</dt>
+<dd>
+<p>signature using dest</p>
+</dd>
+</dl>
+<p>Example:</p>
+<pre><code>example.i2p=b64dest#!action=adddest#olddest=oldb64dest#oldsig=b64sig#sig=b64sig
+</code></pre>
+<h4 id="add-subdomain">Add subdomain</h4>
+<dl>
+<dt>Preceded by subdomain.example.i2p=b64dest</dt>
+<dd>
+<p>YES, this is the new host subdomain name and destination.</p>
+</dd>
+<dt>action</dt>
+<dd>
+<p>addsubdomain</p>
+</dd>
+<dt>oldname</dt>
+<dd>
+<p>the higher-level hostname (example.i2p)</p>
+</dd>
+<dt>olddest</dt>
+<dd>
+<p>the higher-level destination (for example.i2p)</p>
+</dd>
+<dt>oldsig</dt>
+<dd>
+<p>signature using olddest</p>
+</dd>
+<dt>sig</dt>
+<dd>
+<p>signature using dest</p>
+</dd>
+</dl>
+<p>Example:</p>
+<pre><code>subdomain.example.i2p=b64dest#!action=addsubdomain#oldname=example.i2p#olddest=oldb64dest#oldsig=b64sig#sig=b64sig
+</code></pre>
+<h4 id="update-metadata">Update metadata</h4>
+<dl>
+<dt>Preceded by example.i2p=b64dest</dt>
+<dd>
+<p>YES, this is the old host name and destination.</p>
+</dd>
+<dt>action</dt>
+<dd>
+<p>update</p>
+</dd>
+<dt>sig</dt>
+<dd>
+<p>signature</p>
+</dd>
+</dl>
+<p>(add any updated keys here)</p>
+<p>Example:</p>
+<pre><code>example.i2p=b64dest#!action=update#k1=v1#k2=v2#sig=b64sig
+</code></pre>
+<h4 id="remove-hostname">Remove hostname</h4>
+<dl>
+<dt>Preceded by example.i2p=b64dest</dt>
+<dd>
+<p>NO, these are specified in the options</p>
+</dd>
+<dt>action</dt>
+<dd>
+<p>remove</p>
+</dd>
+<dt>name</dt>
+<dd>
+<p>the hostname</p>
+</dd>
+<dt>dest</dt>
+<dd>
+<p>the destination</p>
+</dd>
+<dt>sig</dt>
+<dd>
+<p>signature</p>
+</dd>
+</dl>
+<p>Example:</p>
+<pre><code>#!action=remove#name=example.i2p#dest=b64destsig=b64sig
+</code></pre>
+<h4 id="remove-all-with-this-destination">Remove all with this destination</h4>
+<dl>
+<dt>Preceded by example.i2p=b64dest</dt>
+<dd>
+<p>NO, these are specified in the options</p>
+</dd>
+<dt>action</dt>
+<dd>
+<p>removeall</p>
+</dd>
+<dt>name</dt>
+<dd>
+<p>the old hostname, advisory only</p>
+</dd>
+<dt>dest</dt>
+<dd>
+<p>the old dest, all with this dest are removed</p>
+</dd>
+<dt>sig</dt>
+<dd>
+<p>signature</p>
+</dd>
+</dl>
+<p>Example:</p>
+<pre><code>#!action=removeall#name=example.i2p#dest=b64destsig=b64sig
+</code></pre>
+<h3 id="signatures">Signatures</h3>
+<p>All commands must contain a signature key/value &quot;sig=b64signature&quot;
+where the signature for the other data, using the destination signing
+key.</p>
+<p>For commands including an old and new destination, there must also be an
+oldsig=b64signature, and either oldname, olddest, or both.</p>
+<p>In an Add or Change command, the public key for verification is in the
+Destination to be added or changed.</p>
+<p>In some add or edit commands, there may be an additional destination
+referenced, for example when adding an alias, or changing a destination
+or host name. In that case, there must be a second signature included
+and both should be verified. The second signature is the &quot;inner&quot;
+signature and is signed and verified first (excluding the &quot;outer&quot;
+signature). The client should take any additional action necessary to
+verify and accept changes.</p>
+<p>oldsig is always the &quot;inner&quot; signature. Sign and verify without the
+'oldsig' or 'sig' keys present. sig is always the &quot;outer&quot;
+signature. Sign and verify with the 'oldsig' key present but not the
+'sig' key.</p>
+<h4 id="input-for-signatures">Input for signatures</h4>
+<p>To generate a byte stream to create or verify the signature, serialize
+as follows:</p>
+<ul>
+<li>Remove the &quot;sig&quot; key</li>
+<li>If verifying with oldsig, also remove the &quot;oldsig&quot; key</li>
+<li>For Add or Change commands only, output example.i2p=b64dest</li>
+<li>If any keys remain, output &quot;#!&quot;</li>
+<li>Sort the options by UTF-8 key, fail if duplicate keys</li>
+<li>For each key/value, output key=value, followed by (if not the last
+key/value) a '#'</li>
+</ul>
+<p>Notes</p>
+<ul>
+<li>Do not output a newline</li>
+<li>Output encoding is UTF-8</li>
+<li>All destination and signature encoding is in Base 64 using the I2P
+alphabet</li>
+<li>Keys and values are case-sensitive</li>
+<li>Host names must be in lower-case</li>
+</ul>
+<h2 id="compatibility">Compatibility</h2>
+<p>All new lines in the hosts.txt format are implemented using leading
+comment characters, so all older I2P versions will interpret the new
+commands as comments.</p>
+<p>When I2P routers update to the new specification, they will not
+re-interpret old comments, but will start listening to new commands in
+subsequent fetches of their subscription feeds. Thus it is important for
+name servers to persist command entries in some fashion, or enable etag
+support so that routers can fetch all past commands.</p>
+
+  </section>
+</article>
+
+</main>
+
+</div>
+
+<footer>
+  <div class="container">
+    <span class="copyright">&copy; 2021 I2P Specifications - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
+

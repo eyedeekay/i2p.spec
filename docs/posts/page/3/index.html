@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="generator" content="Hugo 0.83.0-DEV" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/i2p.spec/css/style.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
+<link rel="alternate" href="/i2p.spec/index.xml" type="application/rss+xml" title="I2P Specifications">
+<title>Posts - I2P Specifications</title>
+</head>
+<body>
+
+<header>
+  <div class="container clearfix">
+    <a class="path" href="https://eyedeekay.github.io/i2p.spec/">[I2P Specifications]</a>
+    <span class="caret"># _</span>
+    <div class="right">
+      
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+
+<main role="main" class="article-list">
+  <h1 class="list-title">Posts</h1>
+  
+    <article class="list-item" itemscope itemtype="http://schema.org/Blog">
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/encryptedleaseset/">Encryptedleaseset</a></h2>
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2021-04-27">April 27, 2021</time></span>
+
+  </div>
+  <section class="summary">
+    Encrypted LeaseSet Specification Category: Protocols Last updated: June 2019 Accurate for: 0.9.41
+Overview This document specifies the blinding, encryption, and decryption of encrypted leasesets. For the structure of the encrypted leaseset, see the common structures specification. For backround on encrypted leasesets, see proposal 123. For usage in the netdb, see netdb documentation.
+Definitions We define the following functions corresponding to the cryptographic building blocks used for encrypted LS2:
+ CSRNG(n)  n-byte output from a cryptographically-secure random number generator.  <a href="/i2p.spec/posts/encryptedleaseset/">Read More...</a>
+  </section>
+</article>
+
+  
+    <article class="list-item" itemscope itemtype="http://schema.org/Blog">
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/filter-format/">Filter Format</a></h2>
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2021-04-27">April 27, 2021</time></span>
+
+  </div>
+  <section class="summary">
+    Access Filter Format Specification Last updated: April 2019 Accurate for: 0.9.40
+Overview The definition of a filter is a list of Strings. Blank lines and lines beginning with # are ignored. Changes in the filter definition take effect on restart of the tunnel.
+Each line can represent one of these items:
+ definition of a default threshold to apply to any remote destinations not listed in this file or any of the referenced files definition of a threshold to apply to a specific remote destination definition of a threshold to apply to remote destinations listed in a file definition of a threshold that if breached will cause the offending remote destination to be recorded in a specified file  The order of the definitions matters.  <a href="/i2p.spec/posts/filter-format/">Read More...</a>
+  </section>
+</article>
+
+  
+    <article class="list-item" itemscope itemtype="http://schema.org/Blog">
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/geoip/">Geoip</a></h2>
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2021-04-27">April 27, 2021</time></span>
+
+  </div>
+  <section class="summary">
+    GeoIP File Specification Last updated: December 2013 Accurate for: 0.9.9
+Overview This page specifies the format of the various GeoIP files, used by the router to look up a country for an IP.
+Country Name (countries.txt) Format This format is easily generated from data files available from many public sources. For example:
+ $ wget http://geolite.maxmind.com/download/geoip/database/GeoIPCountryCSV.zip $ unzip GeoIPCountryCSV.zip $ cut -d, -f5,6 &lt; GeoIPCountryWhois.csv | sed 's/&quot;//g' | sort | uniq &gt; countries.  <a href="/i2p.spec/posts/geoip/">Read More...</a>
+  </section>
+</article>
+
+  
+</main>
+
+  <nav class="paginator">
+    
+    <a class="nav-left" href="/i2p.spec/posts/page/2/">&lt; Prev</a>
+    
+
+    <span>3 / 8</span>
+
+    
+    <a class="nav-right" href="/i2p.spec/posts/page/4/">Next &gt;</a>
+    
+  </nav>
+
+
+</div>
+
+<footer>
+  <div class="container">
+    <span class="copyright">&copy; 2021 I2P Specifications - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
+
