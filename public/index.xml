@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>I2P Specifications</title>
+    <link>/</link>
+    <description>Recent content on I2P Specifications</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>I2P Specification Documents</title>
+      <link>/</link>
+      <pubDate>Tue, 27 Apr 2021 13:01:23 -0400</pubDate>
+      
+      <guid>/</guid>
+      <description> Updates Common Structures Cryptography Tunnel Creation Tunnel Message NTCP2 SSU Datagrams ECIES EncryptedLeaseSet I2CP I2NP Streaming Filter-Format Subscription B32 Encrypted Blockfile Configuration ECIES Routers Tunnel Creation ECIES GeoIP Plugin Red25519  </description>
+    </item>
+    
+  </channel>
+</rss>
