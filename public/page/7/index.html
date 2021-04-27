@@ -62,7 +62,7 @@
   <div class="article-list">
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/b32encrypted/">B32encrypted</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/updates/">Updates</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -70,15 +70,15 @@
 
   </div>
   <section class="summary">
-    B32 for Encrypted Leasesets Last updated: 2020-08 Accurate for: 0.9.47
-Overview Standard Base 32 (&quot;b32&quot;) addresses contain the hash of the destination. This will not work for encrypted ls2 (proposal 123).
-We can't use a traditional base 32 address for an encrypted LS2 (proposal 123), as it contains only the hash of the destination. It does not provide the non-blinded public key. Clients must know the destination's public key, sig type, the blinded sig type, and an optional secret or private key to fetch and decrypt the leaseset.  <a href="/i2p.spec/posts/b32encrypted/">Read More...</a>
+    Software Update Specification Last updated: August 2019 Accurate for: 0.9.42
+Overview I2P uses a simple, yet secure, system for automated software update. The router console periodically pulls a news file from a configurable I2P URL. There is a hardcoded backup URL pointing to the project website, in case the default project news host goes down.
+The contents of the news file are displayed on the home page of the router console.  <a href="/i2p.spec/posts/updates/">Read More...</a>
   </section>
 </article>
 
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/blockfile/">Blockfile</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/common-structures/">Common Structures</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -86,15 +86,17 @@ We can't use a traditional base 32 address for an encrypted LS2 (proposal 123), 
 
   </div>
   <section class="summary">
-    Blockfile and Hosts Database Specification Last updated: 2020-09 Accurate for: 0.9.47
-Overview This document specifies the I2P blockfile file format and the tables in the hostsdb.blockfile used by the Blockfile Naming Service [NAMING].
-The blockfile provides fast Destination lookup in a compact format. While the blockfile page overhead is substantial, the destinations are stored in binary rather than in Base 64 as in the hosts.txt format. In addition, the blockfile provides the capability of arbitrary metadata storage (such as added date, source, and comments) for each entry.  <a href="/i2p.spec/posts/blockfile/">Read More...</a>
+    Common structures Specification Category: Design Last updated: 2021-04 Accurate for: 0.9.49
+This document describes some data types common to all I2P protocols, like [I2NP], [I2CP], [SSU], etc.
+Common type specification Integer Description Represents a non-negative integer.
+Contents 1 to 8 bytes in network byte order (big endian) representing an unsigned integer.
+Date Description The number of milliseconds since midnight on January 1, 1970 in the GMT timezone. If the number is 0, the date is undefined or null.  <a href="/i2p.spec/posts/common-structures/">Read More...</a>
   </section>
 </article>
 
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/configuration/">Configuration</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/cryptography/">Cryptography</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -102,10 +104,9 @@ The blockfile provides fast Destination lookup in a compact format. While the bl
 
   </div>
   <section class="summary">
-    Configuration File Specification Last updated: March 2020 Accurate for: 0.9.45
-Overview This page provides a general specification of I2P configuration files, used by the router and various applications. It also gives an overview of the information contained in the various files, and links to detailed documentation where available.
-General Format An I2P configuration file is formatted as specified in Java [Properties] with the following exceptions:
- Encoding must be UTF-8 Does not use or recognize any escapes, including '', so lines may not be continued '#' or ';' starts a comment, but '!  <a href="/i2p.spec/posts/configuration/">Read More...</a>
+    Low-level Cryptography Specification Category: Design Last updated: 2020-09 Accurate for: 0.9.47
+Overview This page specifies the low-level details of the cryptography in I2P.
+There are several cryptographic algorithms in use within I2P. In I2P's original design, there was only one of each type - one symmetric algorithm, one asymmetric algorithm, one signing algorithm, and one hashing algorithm. There was no provision to add more algorithms or migrate to ones with more security.  <a href="/i2p.spec/posts/cryptography/">Read More...</a>
   </section>
 </article>
 
@@ -115,13 +116,13 @@ General Format An I2P configuration file is formatted as specified in Java [Prop
   
   <nav class="paginator">
     
-    <span class="nav-left faded">&lt; Prev</span>
+    <a class="nav-left" href="/i2p.spec/page/6/">&lt; Prev</a>
     
 
-    <span>1 / 8</span>
+    <span>7 / 8</span>
 
     
-    <a class="nav-right" href="/i2p.spec/page/2/">Next &gt;</a>
+    <a class="nav-right" href="/i2p.spec/page/8/">Next &gt;</a>
     
   </nav>
 

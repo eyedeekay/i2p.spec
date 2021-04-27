@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="generator" content="Hugo 0.83.0-DEV" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/i2p.spec/css/style.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
+<link rel="alternate" href="/i2p.spec/index.xml" type="application/rss+xml" title="I2P Specifications">
+<title>Configuration - I2P Specifications</title>
+</head>
+<body>
+
+<header>
+  <div class="container clearfix">
+    <a class="path" href="https://eyedeekay.github.io/i2p.spec/">[I2P Specifications]</a>
+    <span class="caret"># _</span>
+    <div class="right">
+      
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+
+<main role="main" class="article">
+  
+<article class="single" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2021-04-27">April 27, 2021</time></span>
+
+
+
+  </div>
+  <h1 class="headline" itemprop="headline">Configuration</h1>
+  <section class="body" itemprop="articleBody">
+    <h1 id="configuration-file-specification">Configuration File Specification</h1>
+<p>Last updated: March 2020 Accurate for: 0.9.45</p>
+<h2 id="overview">Overview</h2>
+<p>This page provides a general specification of I2P configuration files,
+used by the router and various applications. It also gives an overview
+of the information contained in the various files, and links to detailed
+documentation where available.</p>
+<h2 id="general-format">General Format</h2>
+<p>An I2P configuration file is formatted as specified in Java
+[Properties] with the following exceptions:</p>
+<ul>
+<li>Encoding must be UTF-8</li>
+<li>Does not use or recognize any escapes, including '', so lines may
+not be continued</li>
+<li>'#' or ';' starts a comment, but '!' does not</li>
+<li>'#' starts a comment in any position but ';' must be in column
+1 to start a comment</li>
+<li>Leading and trailing whitespace is not trimmed on keys</li>
+<li>Leading and trailing whitespace is trimmed on values</li>
+<li>'=' is the only key-termination character (not ':' or
+whitespace)</li>
+<li>Lines without '=' are ignored. As of release 0.9.10, keys with a
+value of &quot;&quot; are supported.</li>
+<li>As there are no escapes, keys may not contain '#', '=', or
+'n', or start with ';'</li>
+<li>As there are no escapes, values may not contain '#' or 'n', or
+start or end with 'r' or whitespace</li>
+</ul>
+<p>The file need not be sorted, but most applications do sort by key when
+writing to the file, for ease of reading and manual editing.</p>
+<p>Reads and writes are implemented in DataHelper loadProps() and
+storeProps() [DATAHELPER]. Note that the file format is significantly
+different than the serialized format for I2P protocols specified in
+[Mapping].</p>
+<h2 id="core-library-and-router">Core library and router</h2>
+<h3 id="clients-clientsconfig">Clients (clients.config)</h3>
+<p>Configured via /configclients in the router console. As of release
+0.9.42, the default clients.config file is split into individual
+configuration files for each client in the clients.config.d directory.
+After being split, the properties in the individual files are prefixed
+with &quot;clientApp.0.&quot;.</p>
+<p>The format is as follows:</p>
+<p>Lines are of the form clientApp.x.prop=val, where x is the app number.
+App numbers MUST start with 0 and be consecutive.</p>
+<p>Properties are as follows:</p>
+<blockquote>
+<dl>
+<dt>main</dt>
+<dd>Full class name. Required.
+<p>The constructor or main() method in this class will be run,
+depending on whether the client is managed or unmanaged. See below
+for details.</p>
+</dd>
+<dt>name</dt>
+<dd>Name to be displayed on console.</dd>
+<dt>args</dt>
+<dd>Arguments to the main class, separated by spaces or tabs.
+Arguments containing spaces or tabs may be quoted with ' or &quot;</dd>
+<dt>delay</dt>
+<dd>Seconds before starting, default 120</dd>
+<dt>onBoot</dt>
+<dd>{true|false},
+<p>Default false, forces a delay of 0, overrides delay setting</p>
+</dd>
+<dt>startOnLoad:</dt>
+<dd>{true|false}
+<p>Is the client to be run at all? Default true</p>
+</dd>
+</dl>
+</blockquote>
+<p>The following additional properties are used only by plugins:</p>
+<blockquote>
+<dl>
+<dt>stopargs</dt>
+<dd>Arguments to stop the client.</dd>
+<dt>uninstallargs</dt>
+<dd>Arguments to uninstall the client.</dd>
+<dt>classpath</dt>
+<dd>Additional classpath elements for the client, separated by commas.</dd>
+</dl>
+</blockquote>
+<p>The following substitutions are made in the args, stopargs,
+uninstallargs, and classpath lines, for plugins only:</p>
+<blockquote>
+<dl>
+<dt>$I2P</dt>
+<dd>The base I2P install directory</dd>
+<dt>$CONFIG</dt>
+<dd>The user's configuration directory (e.g. ~/.i2p)</dd>
+<dt>$PLUGIN</dt>
+<dd>This plugin's directory (e.g. ~/.i2p/plugins/foo)</dd>
+</dl>
+</blockquote>
+<p>All properties except &quot;main&quot; are optional. Lines starting with &quot;#&quot;
+are comments.</p>
+<p>If the delay is less than zero, the client will wait until the router
+reaches RUNNING state and then start immediately in a new thread.</p>
+<p>If the delay is equal to zero, the client is run immediately, in the
+same thread, so that exceptions may be propagated to the console. In
+this case, the client should either throw an exception, return quickly,
+or spawn its own thread.</p>
+<p>If the delay is greater than zero, it will be run in a new thread, and
+exceptions will be logged but not propagated to the console.</p>
+<p>Clients may be &quot;managed&quot; or &quot;unmanaged&quot;.</p>
+<h3 id="logger-loggerconfig">Logger (logger.config)</h3>
+<p>Configured via /configlogging in the router console.</p>
+<p>Properties are as follows:</p>
+<pre><code># Default 20
+logger.consoleBufferSize=n
+# Default from locale; format as specified by Java SimpleDateFormat
+logger.dateFormat=HH:mm:ss.SSS
+# Default ERROR
+logger.defaultLevel=CRIT|ERROR|WARN|INFO|DEBUG
+# Default true
+logger.displayOnScreen=true|false
+# Default true
+logger.dropDuplicates=true|false
+# Default false
+logger.dropOnOverflow=true|false
+# As of 0.9.18. Default 29 (seconds)
+logger.flushInterval=nnn
+# d = date, c = class, t = thread name, p = priority, m = message
+logger.format={dctpm}*
+# Max to buffer before flushing. Default 1024
+logger.logBufferSize=n
+# Default logs/log-@.txt; @ replaced with number
+logger.logFileName=name
+logger.logFilenameOverride=name
+# Default 10M
+logger.logFileSize=nnn[K|M|G]
+# Highest file number. Default 2
+logger.logRotationLimit=n
+# Default CRIT
+logger.minimumOnScreenLevel=CRIT|ERROR|WARN|INFO|DEBUG
+logger.record.{class}=CRIT|ERROR|WARN|INFO|DEBUG
+</code></pre>
+<h3 id="individual-plugin-pluginspluginconfig">Individual Plugin (plugins/*/plugin.config)</h3>
+<p>See the plugin specification [PLUGIN]. Note that plugins may also
+contain clients.config, i2ptunnel.config, and webapps.config files.</p>
+<h3 id="plugins-pluginsconfig">Plugins (plugins.config)</h3>
+<p>Enable/disable for each installed plugin.</p>
+<p>Properties are as follows:</p>
+<pre><code>plugin.{name}.startOnLoad=true|false
+</code></pre>
+<h3 id="webapps-webappsconfig">Webapps (webapps.config)</h3>
+<p>Enable/disable for each installed webapp.</p>
+<p>Properties are as follows:</p>
+<pre><code>webapps.{name}.classpath=[space- or comma-separated paths]
+webapps.{name}.startOnLoad=true|false
+</code></pre>
+<h3 id="router-routerconfig">Router (router.config)</h3>
+<p>Configured via /configadvanced in the router console.</p>
+<h2 id="applications">Applications</h2>
+<h3 id="addressbook-addressbookconfigtxt">Addressbook (addressbook/config.txt)</h3>
+<p>See documentation in SusiDNS.</p>
+<h3 id="i2psnark-i2psnarkconfigdi2psnarkconfig">I2PSnark (i2psnark.config.d/i2psnark.config)</h3>
+<p>Configured via the application gui.</p>
+<h3 id="individual-i2psnark-i2psnarkconfigdconfig">Individual i2psnark (i2psnark.config.d/<em>/</em>.config)</h3>
+<p>The configuration for an individual torrent. Configured via the
+application gui.</p>
+<h3 id="i2ptunnel-i2ptunnelconfig">I2PTunnel (i2ptunnel.config)</h3>
+<p>Configured via the /i2ptunnel application in the router console. As of
+release 0.9.42, the default i2ptunnel.config file is split into
+individual configuration files for each tunnel in the i2ptunnel.config.d
+directory. After being split, the properties in the individual files are
+NOT prefixed with &quot;tunnel.N.&quot;.</p>
+<p>Properties are as follows:</p>
+<pre><code># Display description for UI
+tunnel.N.description=
+
+# Router IP address or host name. Ignored if in router context.
+tunnel.N.i2cpHost=127.0.0.1
+
+# Router I2CP port. Ignored if in router context.
+tunnel.N.i2cpPort=nnnn
+
+# For clients only. Local listen IP address or host name.
+tunnel.N.interface=127.0.0.1
+
+# For clients only. Local listen port.
+tunnel.N.listenPort=nnnn
+
+# Display name for UI
+tunnel.N.name=
+
+# Servers only. Default false. Originate connections to local server with a
+# unique IP per-remote-destination.
+tunnel.N.option.enableUniqueLocal=true|false
+
+# Servers only. Persistent private leaseset key
+tunnel.N.option.i2cp.leaseSetPrivateKey=base64
+
+# Servers only. Persistent private leaseset key
+tunnel.N.option.i2cp.leaseSetSigningPrivateKey=sigtype:base64
+
+# Clients only. Create a new destination when reopening the socket manager
+tunnel.N.option.i2cp.newDestOnResume=true|false
+
+# Servers only. The maximum size of the thread pool, default 65. Ignored
+# for standard servers.
+tunnel.N.option.i2ptunnel.blockingHandlerCount=nnn
+
+# HTTP client only. Whether to use allow SSL connections to i2p addresses.
+# Default false.
+tunnel.N.option.i2ptunnel.httpclient.allowInternalSSL=true|false
+
+# HTTP client only. Whether to disable address helper links. Default false.
+tunnel.N.option.i2ptunnel.httpclient.disableAddressHelper=true|false
+
+# HTTP client only. Comma- or space-separated list of jump server URLs.
+tunnel.N.option.i2ptunnel.httpclient.jumpServers=http://example.i2p/jump
+
+# HTTP client only. Whether to pass Accept* headers through. Default false.
+tunnel.N.option.i2ptunnel.httpclient.sendAccept=true|false
+
+# HTTP client only. Whether to pass Referer headers through. Default false.
+tunnel.N.option.i2ptunnel.httpclient.sendReferer=true|false
+
+# HTTP client only. Whether to pass User-Agent headers through. Default
+# false.
+tunnel.N.option.i2ptunnel.httpclient.sendUserAgent=true|false
+
+# HTTP client only. Whether to pass Via headers through. Default false.
+tunnel.N.option.i2ptunnel.httpclient.sendVia=true|false
+
+# HTTP client only. Comma- or space-separated list of in-network SSL
+# outproxies.
+tunnel.N.option.i2ptunnel.httpclient.SSLOutproxies=example.i2p
+
+# SOCKS client only. Comma- or space-separated list of in-network
+# outproxies for any ports not specified.
+tunnel.N.option.i2ptunnel.socks.proxy.default=example.i2p
+
+# SOCKS client only. Comma- or space-separated list of in-network
+# outproxies for port NNNN.
+tunnel.N.option.i2ptunnel.socks.proxy.NNNN=example.i2p
+
+# HTTP client only. Whether to use a registered local outproxy plugin.
+# Default true.
+tunnel.N.option.i2ptunnel.useLocalOutproxy=true|false
+
+# Servers only. Whether to use a thread pool. Default true. Ignored for
+# standard servers, always false.
+tunnel.N.option.i2ptunnel.usePool=true|false
+
+# IRC Server only. Only used if fakeHostname contains a %c.  If unset,
+# cloak with a random value that is persistent for the life of this tunnel.
+# If set, cloak with the hash of this passphrase.  Use to have consistent
+# mangling across restarts, or for multiple IRC servers cloak consistently
+# to be able to track users even when they switch servers.  Note: don't
+# quote or put spaces in the passphrase, the i2ptunnel gui can't handle it.
+tunnel.N.option.ircserver.cloakKey=
+
+# IRC Server only. Set the fake hostname sent by I2PTunnel, %f is the full
+# B32 destination hash, %c is the cloaked hash.
+tunnel.N.option.ircserver.fakeHostname=%f.b32.i2p
+
+# IRC Server only. Default user.
+tunnel.N.option.ircserver.method=user|webirc
+
+# IRC Server only. The password to use for the webirc protocol.  Note:
+# don't quote or put spaces in the passphrase, the i2ptunnel gui can't
+# handle it.
+tunnel.N.option.ircserver.webircPassword=
+
+# IRC Server only.
+tunnel.N.option.ircserver.webircSpoofIP=
+
+# For clients only. Alias for the private key in the keystore for the SSL
+# socket. Will be autogenerated if a new key is created.
+tunnel.N.option.keyAlias=
+
+# For clients only. Password for the private key for the SSL socket. Will be
+# autogenerated if a new key is created.
+tunnel.N.option.keyPassword=
+
+# For clients only. Path to the keystore file containing the private key for
+# the SSL socket. Will be autogenerated if a new keystore is created.
+# Relative to $(I2P_CONFIG_DIR)/keystore/ if not absolute.
+tunnel.N.option.keystoreFile=i2ptunnel-(random string).ks
+
+# For clients only. Password for the keystore containing the private key for
+# the SSL socket. Default is &quot;changeit&quot;.
+tunnel.N.option.keystorePassword=changeit
+
+# HTTP Server only. Max number of POSTs allowed for one destination per
+# postCheckTime. Default 0 (unlimited)
+tunnel.N.option.maxPosts=nnn
+
+# HTTP Server only. Max number of POSTs allowed for all destinations per
+# postCheckTime. Default 0 (unlimited)
+tunnel.N.option.maxTotalPosts=nnn
+
+# HTTP Clients only. Whether to send authorization to an outproxy. Default
+# false.
+tunnel.N.option.outproxyAuth=true|false
+
+# HTTP Clients only. The password for the outproxy authorization.
+tunnel.N.option.outproxyPassword=
+
+# HTTP Clients only. The username for the outproxy authorization.
+tunnel.N.option.outproxyUsername=
+
+# HTTP Clients only. Whether to send authorization to an outproxy. Default
+# false.
+tunnel.N.option.outproxyAuth=true|false
+
+# Clients only. Whether to store a destination in a private key file and
+# reuse it. Default false.
+tunnel.N.option.persistentClientKey=true|false
+
+# HTTP Server only. Time period for banning POSTs from a single destination
+# after maxPosts is exceeded, in seconds. Default 1800 seconds.
+tunnel.N.option.postBanTime=nnn
+
+# HTTP Server only. Time period for checking maxPosts and maxTotalPosts, in
+# seconds. Default 300 seconds.
+tunnel.N.option.postCheckTime=nnn
+
+# HTTP Server only. Time period for banning all POSTs after maxTotalPosts
+# is exceeded, in seconds. Default 600 seconds.
+tunnel.N.option.postTotalBanTime=nnn
+
+# HTTP Clients only. Whether to require local authorization for the proxy.
+# Default false. &quot;true&quot; is the same as &quot;basic&quot;.
+tunnel.N.option.proxyAuth=true|false|basic|digest
+
+# HTTP Clients only. The MD5 of the password for local authorization for
+# user USER.
+tunnel.N.option.proxy.auth.USER.md5=
+
+# HTTP Servers only. Whether to reject incoming connections apparently via
+# an inproxy. Default false.
+tunnel.N.option.rejectInproxy=true|false
+
+# HTTP Servers only. Whether to reject incoming connections containing a
+# referer header. Default false. Since 0.9.25.
+tunnel.N.option.rejectReferer=true|false
+
+# HTTP Servers only. Whether to reject incoming connections containing
+# specific user-agent headers. Default false. Since 0.9.25. See
+# tunnel.N.option.userAgentRejectList
+tunnel.N.option.rejectUserAgents=true|false
+
+# Servers only. Overrides targetHost and targetPort for incoming port NNNN.
+tunnel.N.option.targetForPort.NNNN=hostnameOrIP:nnnn
+
+# HTTP Servers only. Comma-separated list of strings to match in the
+# user-agent header. Since 0.9.25. Example: &quot;Mozilla,Opera&quot;. Case-sensitive.
+# As of 0.9.33, a string of &quot;none&quot; may be used to match an empty user-agent.
+# See tunnel.N.option.rejectUserAgents
+tunnel.N.option.userAgentRejectList=string1[,string2]*
+
+# Default false. For servers, use SSL for connections to local server. For
+# clients, SSL is required for connections from local clients.
+tunnel.N.option.useSSL=false
+
+# Each option is passed to I2CP and streaming with &quot;tunnel.N.option.&quot;
+# stripped off. See those docs.
+tunnel.N.option.*=
+
+# For servers and clients with persistent keys only. Absolute path or
+# relative to config directory.
+tunnel.N.privKeyFile=filename
+
+# For proxies only. Comma- or space-separated host names.
+tunnel.N.proxyList=example.i2p[,example2.i2p]
+
+# For clients only. Default false.
+tunnel.N.sharedClient=true|false
+
+# For HTTP servers only. Host name to be passed to the local server in the
+# HTTP headers.  Default is the base 32 hostname.
+tunnel.N.spoofedHost=example.i2p
+
+# For HTTP servers only. Host name to be passed to the local server in the
+# HTTP headers.  Overrides above setting for incoming port NNNN, to allow
+# virtual hosts.
+tunnel.N.spoofedHost.NNNN=example.i2p
+
+# Default true
+tunnel.N.startOnLoad=true|false
+
+# For clients only. Comma- or space-separated host names or host:port.
+tunnel.N.targetDestination=example.i2p[:nnnn][,example2.i2p[:nnnn]]
+
+# For servers only. Local IP address or host name to connect to.
+tunnel.N.targetHost=
+
+# For servers only. Port on targetHost to connect to.
+tunnel.N.targetPort=nnnn
+
+# The type of i2ptunnel
+tunnel.N.type=client|connectclient|httpbidirserver|httpclient|httpserver|ircclient|ircserver|
+          server|socksirctunnel|sockstunnel|streamrclient|streamrserver
+</code></pre>
+<p>Note: Each 'N' is a tunnel number starting with 0. There may not be
+any gaps in numbering.</p>
+<h3 id="router-console">Router Console</h3>
+<p>The router console uses the router.config file.</p>
+<h3 id="susimail-susimailconfig">SusiMail (susimail.config)</h3>
+<p>See post on zzz.i2p.</p>
+<h2 id="references">References</h2>
+<dl>
+<dt>[DATAHELPER]</dt>
+<dd>
+<p><a href="http://echelon.i2p/javadoc/net/i2p/data/DataHelper.html">http://echelon.i2p/javadoc/net/i2p/data/DataHelper.html</a></p>
+</dd>
+<dt>[Mapping]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/common-structures#type-mapping">https://geti2p.net/spec/common-structures#type-mapping</a></p>
+</dd>
+<dt>[PLUGIN]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/plugin">https://geti2p.net/spec/plugin</a></p>
+</dd>
+<dt>[Properties]</dt>
+<dd>
+<p><a href="http://docs.oracle.com/javase/1.5.0/docs/api/java/util/Properties.html#load%28java.io.InputStream%29">http://docs.oracle.com/javase/1.5.0/docs/api/java/util/Properties.html#load%28java.io.InputStream%29</a></p>
+</dd>
+</dl>
+
+  </section>
+</article>
+
+</main>
+
+</div>
+
+<footer>
+  <div class="container">
+    <span class="copyright">&copy; 2021 I2P Specifications - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
+

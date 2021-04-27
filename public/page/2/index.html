@@ -62,7 +62,7 @@
   <div class="article-list">
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/b32encrypted/">B32encrypted</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/datagrams/">Datagrams</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -70,15 +70,16 @@
 
   </div>
   <section class="summary">
-    B32 for Encrypted Leasesets Last updated: 2020-08 Accurate for: 0.9.47
-Overview Standard Base 32 (&quot;b32&quot;) addresses contain the hash of the destination. This will not work for encrypted ls2 (proposal 123).
-We can't use a traditional base 32 address for an encrypted LS2 (proposal 123), as it contains only the hash of the destination. It does not provide the non-blinded public key. Clients must know the destination's public key, sig type, the blinded sig type, and an optional secret or private key to fetch and decrypt the leaseset.  <a href="/i2p.spec/posts/b32encrypted/">Read More...</a>
+    Datagram Specification Category: Protocols Last updated: February 2019 Accurate for: 0.9.39
+Overview See [DATAGRAMS] for an overview of the Datagrams API.
+Non-Repliable Datagrams Non-repliable datagrams have no 'from' address and are not authenticated. They are also called &quot;raw&quot; datagrams. Strictly speaking, they are not &quot;datagrams&quot; at all, they are just raw data. They are not handled by the datagram API. However, SAM and the I2PTunnel classes support &quot;raw datagrams&quot;.
+The standard I2CP protocol number for raw datagrams is PROTO_DATAGRAM_RAW (18).  <a href="/i2p.spec/posts/datagrams/">Read More...</a>
   </section>
 </article>
 
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/blockfile/">Blockfile</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/ecies/">Ecies</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -86,15 +87,17 @@ We can't use a traditional base 32 address for an encrypted LS2 (proposal 123), 
 
   </div>
   <section class="summary">
-    Blockfile and Hosts Database Specification Last updated: 2020-09 Accurate for: 0.9.47
-Overview This document specifies the I2P blockfile file format and the tables in the hostsdb.blockfile used by the Blockfile Naming Service [NAMING].
-The blockfile provides fast Destination lookup in a compact format. While the blockfile page overhead is substantial, the destinations are stored in binary rather than in Base 64 as in the hosts.txt format. In addition, the blockfile provides the capability of arbitrary metadata storage (such as added date, source, and comments) for each entry.  <a href="/i2p.spec/posts/blockfile/">Read More...</a>
+    ECIES-X25519-AEAD-Ratchet Category: Protocols Last updated: 2020-11 Accurate for: 0.9.47
+Note Network deployment and testing in progress. Subject to minor revisions. See [Prop144] for the original proposal, including background discussion and additional information.
+The following features are not implemented as of 0.9.46:
+ MessageNumbers, Options, and Termination blocks Protocol-layer responses Zero static key Multicast  Overview This is the new end-to-end encryption protocol to replace ElGamal/AES+SessionTags [ElG-AES].
+It relies on previous work as follows:  <a href="/i2p.spec/posts/ecies/">Read More...</a>
   </section>
 </article>
 
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/configuration/">Configuration</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/ecies-routers/">Ecies Routers</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -102,10 +105,9 @@ The blockfile provides fast Destination lookup in a compact format. While the bl
 
   </div>
   <section class="summary">
-    Configuration File Specification Last updated: March 2020 Accurate for: 0.9.45
-Overview This page provides a general specification of I2P configuration files, used by the router and various applications. It also gives an overview of the information contained in the various files, and links to detailed documentation where available.
-General Format An I2P configuration file is formatted as specified in Java [Properties] with the following exceptions:
- Encoding must be UTF-8 Does not use or recognize any escapes, including '', so lines may not be continued '#' or ';' starts a comment, but '!  <a href="/i2p.spec/posts/configuration/">Read More...</a>
+    ECIES-X25519 Router Messages Category: Protocols Last updated: 2021-01 Accurate for: 0.9.49
+Note Supported as of release 0.9.49. Network deployment and testing in progress. Subject to minor revision. See proposal 156 [Prop156].
+Overview This document specifies Garlic message encryption to ECIES routers, using crypto primitives introduced by [ECIES-X25519]. It is a portion of the overall proposal [Prop156] for converting routers from ElGamal to ECIES-X25519 keys. This specification is implemented as of release 0.  <a href="/i2p.spec/posts/ecies-routers/">Read More...</a>
   </section>
 </article>
 
@@ -115,13 +117,13 @@ General Format An I2P configuration file is formatted as specified in Java [Prop
   
   <nav class="paginator">
     
-    <span class="nav-left faded">&lt; Prev</span>
+    <a class="nav-left" href="/i2p.spec/">&lt; Prev</a>
     
 
-    <span>1 / 8</span>
+    <span>2 / 8</span>
 
     
-    <a class="nav-right" href="/i2p.spec/page/2/">Next &gt;</a>
+    <a class="nav-right" href="/i2p.spec/page/3/">Next &gt;</a>
     
   </nav>
 

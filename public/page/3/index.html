@@ -62,7 +62,7 @@
   <div class="article-list">
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/b32encrypted/">B32encrypted</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/encryptedleaseset/">Encryptedleaseset</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -70,15 +70,16 @@
 
   </div>
   <section class="summary">
-    B32 for Encrypted Leasesets Last updated: 2020-08 Accurate for: 0.9.47
-Overview Standard Base 32 (&quot;b32&quot;) addresses contain the hash of the destination. This will not work for encrypted ls2 (proposal 123).
-We can't use a traditional base 32 address for an encrypted LS2 (proposal 123), as it contains only the hash of the destination. It does not provide the non-blinded public key. Clients must know the destination's public key, sig type, the blinded sig type, and an optional secret or private key to fetch and decrypt the leaseset.  <a href="/i2p.spec/posts/b32encrypted/">Read More...</a>
+    Encrypted LeaseSet Specification Category: Protocols Last updated: June 2019 Accurate for: 0.9.41
+Overview This document specifies the blinding, encryption, and decryption of encrypted leasesets. For the structure of the encrypted leaseset, see the common structures specification. For backround on encrypted leasesets, see proposal 123. For usage in the netdb, see netdb documentation.
+Definitions We define the following functions corresponding to the cryptographic building blocks used for encrypted LS2:
+ CSRNG(n)  n-byte output from a cryptographically-secure random number generator.  <a href="/i2p.spec/posts/encryptedleaseset/">Read More...</a>
   </section>
 </article>
 
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/blockfile/">Blockfile</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/filter-format/">Filter Format</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -86,15 +87,16 @@ We can't use a traditional base 32 address for an encrypted LS2 (proposal 123), 
 
   </div>
   <section class="summary">
-    Blockfile and Hosts Database Specification Last updated: 2020-09 Accurate for: 0.9.47
-Overview This document specifies the I2P blockfile file format and the tables in the hostsdb.blockfile used by the Blockfile Naming Service [NAMING].
-The blockfile provides fast Destination lookup in a compact format. While the blockfile page overhead is substantial, the destinations are stored in binary rather than in Base 64 as in the hosts.txt format. In addition, the blockfile provides the capability of arbitrary metadata storage (such as added date, source, and comments) for each entry.  <a href="/i2p.spec/posts/blockfile/">Read More...</a>
+    Access Filter Format Specification Last updated: April 2019 Accurate for: 0.9.40
+Overview The definition of a filter is a list of Strings. Blank lines and lines beginning with # are ignored. Changes in the filter definition take effect on restart of the tunnel.
+Each line can represent one of these items:
+ definition of a default threshold to apply to any remote destinations not listed in this file or any of the referenced files definition of a threshold to apply to a specific remote destination definition of a threshold to apply to remote destinations listed in a file definition of a threshold that if breached will cause the offending remote destination to be recorded in a specified file  The order of the definitions matters.  <a href="/i2p.spec/posts/filter-format/">Read More...</a>
   </section>
 </article>
 
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/configuration/">Configuration</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/geoip/">Geoip</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -102,10 +104,10 @@ The blockfile provides fast Destination lookup in a compact format. While the bl
 
   </div>
   <section class="summary">
-    Configuration File Specification Last updated: March 2020 Accurate for: 0.9.45
-Overview This page provides a general specification of I2P configuration files, used by the router and various applications. It also gives an overview of the information contained in the various files, and links to detailed documentation where available.
-General Format An I2P configuration file is formatted as specified in Java [Properties] with the following exceptions:
- Encoding must be UTF-8 Does not use or recognize any escapes, including '', so lines may not be continued '#' or ';' starts a comment, but '!  <a href="/i2p.spec/posts/configuration/">Read More...</a>
+    GeoIP File Specification Last updated: December 2013 Accurate for: 0.9.9
+Overview This page specifies the format of the various GeoIP files, used by the router to look up a country for an IP.
+Country Name (countries.txt) Format This format is easily generated from data files available from many public sources. For example:
+ $ wget http://geolite.maxmind.com/download/geoip/database/GeoIPCountryCSV.zip $ unzip GeoIPCountryCSV.zip $ cut -d, -f5,6 &lt; GeoIPCountryWhois.csv | sed 's/&quot;//g' | sort | uniq &gt; countries.  <a href="/i2p.spec/posts/geoip/">Read More...</a>
   </section>
 </article>
 
@@ -115,13 +117,13 @@ General Format An I2P configuration file is formatted as specified in Java [Prop
   
   <nav class="paginator">
     
-    <span class="nav-left faded">&lt; Prev</span>
+    <a class="nav-left" href="/i2p.spec/page/2/">&lt; Prev</a>
     
 
-    <span>1 / 8</span>
+    <span>3 / 8</span>
 
     
-    <a class="nav-right" href="/i2p.spec/page/2/">Next &gt;</a>
+    <a class="nav-right" href="/i2p.spec/page/4/">Next &gt;</a>
     
   </nav>
 

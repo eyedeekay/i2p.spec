@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>I2P Specifications</title>
-    <link>https://eyedeekay.github.io/i2p.spec/</link>
-    <description>Recent content on I2P Specifications</description>
+    <title>Posts on I2P Specifications</title>
+    <link>https://eyedeekay.github.io/i2p.spec/posts/</link>
+    <description>Recent content in Posts on I2P Specifications</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 27 Apr 2021 14:39:35 -0400</lastBuildDate><atom:link href="https://eyedeekay.github.io/i2p.spec/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 27 Apr 2021 14:39:35 -0400</lastBuildDate><atom:link href="https://eyedeekay.github.io/i2p.spec/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>B32encrypted</title>
       <link>https://eyedeekay.github.io/i2p.spec/posts/b32encrypted/</link>

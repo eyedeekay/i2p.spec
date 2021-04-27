@@ -62,7 +62,7 @@
   <div class="article-list">
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/b32encrypted/">B32encrypted</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/i2cp/">I2cp</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -70,15 +70,15 @@
 
   </div>
   <section class="summary">
-    B32 for Encrypted Leasesets Last updated: 2020-08 Accurate for: 0.9.47
-Overview Standard Base 32 (&quot;b32&quot;) addresses contain the hash of the destination. This will not work for encrypted ls2 (proposal 123).
-We can't use a traditional base 32 address for an encrypted LS2 (proposal 123), as it contains only the hash of the destination. It does not provide the non-blinded public key. Clients must know the destination's public key, sig type, the blinded sig type, and an optional secret or private key to fetch and decrypt the leaseset.  <a href="/i2p.spec/posts/b32encrypted/">Read More...</a>
+    I2CP Specification Category: Protocols Last updated: 2020-11 Accurate for: 0.9.48
+Overview This page specified the I2P Control Protocol (I2CP), which is the interface between clients and the router. Java clients will use the I2CP client API, which implements this protocol. Non-Java clients will most likely use a higher-layer protocol such as SAM or BOB.
+The protocol is only serialized if the client and router are not in the same JVM; otherwise, I2CP message objects are passed via an internal JVM interface.  <a href="/i2p.spec/posts/i2cp/">Read More...</a>
   </section>
 </article>
 
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/blockfile/">Blockfile</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/i2np/">I2np</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -86,15 +86,15 @@ We can't use a traditional base 32 address for an encrypted LS2 (proposal 123), 
 
   </div>
   <section class="summary">
-    Blockfile and Hosts Database Specification Last updated: 2020-09 Accurate for: 0.9.47
-Overview This document specifies the I2P blockfile file format and the tables in the hostsdb.blockfile used by the Blockfile Naming Service [NAMING].
-The blockfile provides fast Destination lookup in a compact format. While the blockfile page overhead is substantial, the destinations are stored in binary rather than in Base 64 as in the hosts.txt format. In addition, the blockfile provides the capability of arbitrary metadata storage (such as added date, source, and comments) for each entry.  <a href="/i2p.spec/posts/blockfile/">Read More...</a>
+    I2NP Specification Category: Protocols Last updated: 2021-01 Accurate for: 0.9.49
+Overview The I2P Network Protocol (I2NP), which is sandwiched between I2CP and the various I2P transport protocols, manages the routing and mixing of messages between routers, as well as the selection of what transports to use when communicating with a peer for which there are multiple common transports supported.
+Protocol Versions All routers must publish their I2NP protocol version in the &quot;router.  <a href="/i2p.spec/posts/i2np/">Read More...</a>
   </section>
 </article>
 
     
       <article class="list-item" itemscope itemtype="http://schema.org/Blog">
-  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/configuration/">Configuration</a></h2>
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/ntcp2/">Ntcp2</a></h2>
   <div class="meta">
 
     <span class="key">published on</span>
@@ -102,10 +102,9 @@ The blockfile provides fast Destination lookup in a compact format. While the bl
 
   </div>
   <section class="summary">
-    Configuration File Specification Last updated: March 2020 Accurate for: 0.9.45
-Overview This page provides a general specification of I2P configuration files, used by the router and various applications. It also gives an overview of the information contained in the various files, and links to detailed documentation where available.
-General Format An I2P configuration file is formatted as specified in Java [Properties] with the following exceptions:
- Encoding must be UTF-8 Does not use or recognize any escapes, including '', so lines may not be continued '#' or ';' starts a comment, but '!  <a href="/i2p.spec/posts/configuration/">Read More...</a>
+    NTCP 2 Category: Transports Last updated: 2021-03 Accurate for: 0.9.50
+Overview NTCP2 is an authenticated key agreement protocol that improves the resistance of [NTCP] to various forms of automated identification and attacks.
+NTCP2 is designed for flexibility and coexistence with NTCP. It may be supported on the same port as NTCP, or a different port, or without simultaneous NTCP support at all. See the Published Router Info section below for details.  <a href="/i2p.spec/posts/ntcp2/">Read More...</a>
   </section>
 </article>
 
@@ -115,13 +114,13 @@ General Format An I2P configuration file is formatted as specified in Java [Prop
   
   <nav class="paginator">
     
-    <span class="nav-left faded">&lt; Prev</span>
+    <a class="nav-left" href="/i2p.spec/page/3/">&lt; Prev</a>
     
 
-    <span>1 / 8</span>
+    <span>4 / 8</span>
 
     
-    <a class="nav-right" href="/i2p.spec/page/2/">Next &gt;</a>
+    <a class="nav-right" href="/i2p.spec/page/5/">Next &gt;</a>
     
   </nav>
 
