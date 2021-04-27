@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="generator" content="Hugo 0.83.0-DEV" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/i2p.spec/css/style.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
+<link rel="alternate" href="/i2p.spec/index.xml" type="application/rss+xml" title="I2P Specifications">
+<title>I2np - I2P Specifications</title>
+</head>
+<body>
+
+<header>
+  <div class="container clearfix">
+    <a class="path" href="https://eyedeekay.github.io/i2p.spec/">[I2P Specifications]</a>
+    <span class="caret"># _</span>
+    <div class="right">
+      
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+
+<main role="main" class="article">
+  
+<article class="single" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2021-04-27">April 27, 2021</time></span>
+
+
+
+  </div>
+  <h1 class="headline" itemprop="headline">I2np</h1>
+  <section class="body" itemprop="articleBody">
+    <h1 id="i2np-specification">I2NP Specification</h1>
+<p>Category: Protocols Last updated: 2021-01 Accurate for: 0.9.49</p>
+<h2 id="overview">Overview</h2>
+<p>The I2P Network Protocol (I2NP), which is sandwiched between I2CP and
+the various I2P transport protocols, manages the routing and mixing of
+messages between routers, as well as the selection of what transports to
+use when communicating with a peer for which there are multiple common
+transports supported.</p>
+<h2 id="versions">Protocol Versions</h2>
+<p>All routers must publish their I2NP protocol version in the
+&quot;router.version&quot; field in the RouterInfo properties. This version
+field indicates their level of support for various I2NP protocol
+features, and is not necessarily the actual router version.</p>
+<p>If alternative (non-Java) routers wish to publish any version
+information about the actual router implementation, they must do so in
+another property. Versions other than those listed below are allowed.
+Support will be determined through a numeric comparison; for example,
+0.9.13 implies support for 0.9.12 features. Note that the
+&quot;coreVersion&quot; property is not used for determination of the I2NP
+protocol version.</p>
+<p>A basic summary of the I2NP protocol versions is as follows. For
+details, see below.</p>
+<p>+&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| Version        | Required I2NP Features                             |
++================+====================================================+
+| &gt; 0.9.49       | Garlic messages to ECIES-X25519 routers            |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.48       | ECIES-X25519 Routers                               |
+|                |                                                    |
+|                | ECIES-X25519 Build Request/Response records        |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.46       | DatabaseLookup flag bit 4 for AEAD reply           |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.44       | ECIES-X25519 keys in LeaseSet2                     |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.40       | MetaLeaseSet may be sent in a DSM                  |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.39       | EncryptedLeaseSet may be sent in a DSM             |
+|                |                                                    |
+|                | RedDSA_SHA512_Ed25519 signature type supported   |
+|                | for destinations and leasesets                     |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.38       | DSM type bits 3-0 now contain the type; LeaseSet2  |
+|                | may be sent in a DSM                               |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.36       | NTCP2 transport support (if advertised in router   |
+|                | address)                                           |
+|                |                                                    |
+|                | Minimum peers will build tunnels through, as of    |
+|                | 0.9.46                                             |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.28       | RSA sig types disallowed                           |
+|                |                                                    |
+|                | Minimum floodfill peers will send DSM to, as of    |
+|                | 0.9.34                                             |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.18       | DSM type bits 7-1 ignored                          |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.16       | RI key certs / ECDSA and EdDSA sig types           |
+|                |                                                    |
+|                | Note: RSA sig types also supported as of this      |
+|                | version, but currently unused                      |
+|                |                                                    |
+|                | DLM lookup types (DLM flag bits 3-2)               |
+|                |                                                    |
+|                | Minimum version compatible with vast majority of   |
+|                | current network, since routers are now using the   |
+|                | EdDSA sig type.                                    |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.15       | Dest/LS key certs w/ EdDSA Ed25519 sig type (if    |
+|                | floodfill)                                         |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.12       | Dest/LS key certs w/ ECDSA P-256, P-384, and P-521 |
+|                | sig types (if floodfill)                           |
+|                |                                                    |
+|                | Note: RSA sig types also supported as of this      |
+|                | version, but currently unused                      |
+|                |                                                    |
+|                | Nonzero expiration allowed in RouterAddress        |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.7        | Encrypted DSM/DSRM replies supported (DLM flag bit |
+|                | 1) (if floodfill)                                  |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.6        | Nonzero DLM flag bits 7-1 allowed                  |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9.3        | Requires zero expiration in RouterAddress          |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.9          | Supports up to 16 leases in a DSM LS store (6      |
+|                | previously)                                        |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.7.12       | VTBM and VTBRM message support                     |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.7.10       | Floodfill supports encrypted DSM stores            |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| 0.7.9 or lower | All messages and features not listed above         |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+| &gt; 0.6.1.10     | TBM and TBRM messages introduced                   |
+|                |                                                    |
+|                | Minimum version compatible with current network    |
++&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+</p>
+<p>Note that there are also transport-related features and compatibility
+issues; see the NTCP and SSU transport documentation for details.</p>
+<h2 id="structures">Common structures</h2>
+<p>The following structures are elements of multiple I2NP messages. They
+are not complete messages.</p>
+<h3 id="struct-I2NPMessageHeader">I2NP message header</h3>
+<h4 id="description">Description</h4>
+<p>Common header to all I2NP messages, which contains important information
+like a checksum, expiration date, etc.</p>
+<h4 id="contents">Contents</h4>
+<p>1 byte [Integer] specifying the type of this message, followed by a 4
+byte [Integer] specifying the message-id. After that there is an
+expiration [Date], followed by a 2 byte [Integer] specifying the
+length of the message payload, followed by a [Hash], which is
+truncated to the first byte. After that the actual message data follows.</p>
+<blockquote>
+<p>Standard (16 bytes):</p>
+<p>+----+----+----+----+----+----+----+----+
+msg_id | expiration
++----+----+----+----+----+----+----+----+ |
+size +----+----+----+----+----+----+----+----+</p>
+<p>Short (SSU, 5 bytes):</p>
+<hr>
+<p>type   shor   t_exp   irati   on</p>
+<hr>
+<p>Short (NTCP2, 9 bytes):</p>
+<p>+----+----+----+----+----+----+----+----+
+msg_id |
+short_expira-+----+----+----+----+----+----+----+----+
+tion| +----+</p>
+<dl>
+<dt>type :: [Integer]</dt>
+<dd>length -&gt; 1 byte purpose -&gt; identifies the message type (see
+table below)</dd>
+<dt>msg_id :: [Integer]</dt>
+<dd>length -&gt; 4 bytes purpose -&gt; uniquely identifies this message
+(for some time at least) This is usually a locally-generated
+random number, but for outgoing tunnel build messages it may be
+derived from the incoming message. See below.</dd>
+<dt>expiration :: [Date]</dt>
+<dd>8 bytes date this message will expire</dd>
+<dt>short_expiration :: [Integer]</dt>
+<dd>4 bytes date this message will expire (seconds since the epoch)</dd>
+<dt>size :: [Integer]</dt>
+<dd>length -&gt; 2 bytes purpose -&gt; length of the payload</dd>
+<dt>chks :: [Integer]</dt>
+<dd>length -&gt; 1 byte purpose -&gt; checksum of the payload SHA256 hash
+truncated to the first byte</dd>
+<dt>data ::</dt>
+<dd>length -&gt; $size bytes purpose -&gt; actual message contents</dd>
+</dl>
+</blockquote>
+<p>[Date]: /spec/common-structures#type-date [Integer]:
+/spec/common-structures#type-integer</p>
+<h4 id="notes">Notes</h4>
+<ul>
+<li>When transmitted over [SSU], the 16-byte standard header is not
+used. Only a 1-byte type and a 4-byte expiration in seconds are
+included. The message id and size are incorporated in the SSU data
+packet format. The checksum is not required since errors are caught
+in decryption.</li>
+<li>When transmitted over [NTCP2], the 16-byte standard header is not
+used. Only a 1-byte type, 4-byte message id, and a 4-byte expiration
+in seconds are included. The size is incorporated in the NTCP2 data
+packet format. The checksum is not required since errors are caught
+in decryption.</li>
+<li>The standard header is also required for I2NP messages contained in
+other messages and structures (Data, TunnelData, TunnelGateway, and
+GarlicClove). As of release 0.8.12, to reduce overhead, checksum
+verification is disabled at some places in the protocol stack.
+However, for compatibility with older versions, checksum generation
+is still required. It is a topic for future research to determine
+points in the protocol stack where the far-end router's version is
+known and checksum generation can be disabled.</li>
+<li>The short expiration is unsigned and will wrap around on Feb.
+7, 2106. As of that date, an offset must be added to get the correct
+time.</li>
+</ul>
+<h3 id="struct-BuildRequestRecord">BuildRequestRecord</h3>
+<h4 id="description-1">Description</h4>
+<p>One Record in a set of multiple records to request the creation of one
+hop in the tunnel. For more details see the tunnel overview
+[TUNNEL-IMPL] and the ElGamal tunnel creation specification
+[TUNNEL-CREATION].</p>
+<p>For ECIES-X25519 BuildRequestRecords, see [TUNNEL-CREATION-ECIES].</p>
+<h4 id="contents-elgamal">Contents (ElGamal)</h4>
+<p>[TunnelId] to receive messages on, followed by the [Hash] of our
+[RouterIdentity]. After that the [TunnelId] and the [Hash] of the
+next router's [RouterIdentity] follow.</p>
+<p>ElGamal and AES encrypted:</p>
+<blockquote>
+<p>+----+----+----+----+----+----+----+----+ |
+encrypted data... | ~ ~ | |
++----+----+----+----+----+----+----+----+</p>
+<dl>
+<dt>encrypted_data :: ElGamal and AES encrypted data</dt>
+<dd>length -&gt; 528</dd>
+</dl>
+<p>total length: 528</p>
+</blockquote>
+<p>ElGamal encrypted:</p>
+<blockquote>
+<p>+----+----+----+----+----+----+----+----+ |
+toPeer | + + | |
++----+----+----+----+----+----+----+----+ |
+encrypted data... | ~ ~ | |
++----+----+----+----+----+----+----+----+</p>
+<dl>
+<dt>toPeer :: First 16 bytes of the SHA-256 Hash of the peer's [RouterIdentity]</dt>
+<dd>length -&gt; 16 bytes</dd>
+<dt>encrypted_data :: ElGamal-2048 encrypted data (see notes)</dt>
+<dd>length -&gt; 512</dd>
+</dl>
+<p>total length: 528</p>
+</blockquote>
+<p>[RouterIdentity]: /spec/common-structures#struct-routeridentity</p>
+<p>Cleartext:</p>
+<blockquote>
+<p>+----+----+----+----+----+----+----+----+ |
+receive_tunnel | our_ident | +----+----+----+----+ +
+| | + + | | + + | | + +----+----+----+----+ | |
+next_tunnel |
++----+----+----+----+----+----+----+----+ |
+next_ident | + + | | + + | | + + | |
++----+----+----+----+----+----+----+----+ |
+layer_key | + + | | + + | | + + | |
++----+----+----+----+----+----+----+----+ |
+iv_key | + + | | + + | | + + | |
++----+----+----+----+----+----+----+----+ |
+reply_key | + + | | + + | | + + | |
++----+----+----+----+----+----+----+----+ |
+reply_iv | + + | |
++----+----+----+----+----+----+----+----+
+request_time | send_msg_id
++----+----+----+----+----+----+----+----+ |
+| +----+ + | 29 bytes padding | + + | | + +----+----+ |
+| +----+----+----+----+----+----+</p>
+<dl>
+<dt>receive_tunnel :: [TunnelId]</dt>
+<dd>length -&gt; 4 bytes nonzero</dd>
+<dt>our_ident :: [Hash]</dt>
+<dd>length -&gt; 32 bytes</dd>
+<dt>next_tunnel :: [TunnelId]</dt>
+<dd>length -&gt; 4 bytes nonzero</dd>
+<dt>next_ident :: [Hash]</dt>
+<dd>length -&gt; 32 bytes</dd>
+<dt>layer_key :: [SessionKey]</dt>
+<dd>length -&gt; 32 bytes</dd>
+<dt>iv_key :: [SessionKey]</dt>
+<dd>length -&gt; 32 bytes</dd>
+<dt>reply_key :: [SessionKey]</dt>
+<dd>length -&gt; 32 bytes</dd>
+<dt>reply_iv :: data</dt>
+<dd>length -&gt; 16 bytes</dd>
+<dt>flag :: [Integer]</dt>
+<dd>length -&gt; 1 byte</dd>
+<dt>request_time :: [Integer]</dt>
+<dd>length -&gt; 4 bytes Hours since the epoch, i.e. current time / 3600</dd>
+<dt>send_message_id :: [Integer]</dt>
+<dd>length -&gt; 4 bytes</dd>
+<dt>padding :: Data</dt>
+<dd>length -&gt; 29 bytes source -&gt; random</dd>
+</dl>
+<p>total length: 222</p>
+</blockquote>
+<p>[Integer]: /spec/common-structures#type-integer [SessionKey]:
+/spec/common-structures#type-sessionkey [Hash]:
+/spec/common-structures#type-hash [TunnelId]:
+/spec/common-structures#type-tunnelid</p>
+<h4 id="notes-1">Notes</h4>
+<ul>
+<li>In the 512-byte encrypted record, the ElGamal data contains bytes
+1-256 and 258-513 of the 514-byte ElGamal encrypted block
+[CRYPTO-ELG]. The two padding bytes from the block (the zero bytes
+at locations 0 and 257) are removed.</li>
+<li>See the tunnel creation specification [TUNNEL-CREATION] for
+details on field contents.</li>
+</ul>
+<h3 id="struct-BuildResponseRecord">BuildResponseRecord</h3>
+<h4 id="description-2">Description</h4>
+<p>One Record in a set of multiple records with responses to a build
+request. For more details see the tunnel overview [TUNNEL-IMPL] and
+the ElGamal tunnel creation specification [TUNNEL-CREATION].</p>
+<p>For ECIES-X25519 BuildResponseRecords, see [TUNNEL-CREATION-ECIES].</p>
+<h4 id="contents-elgamal-1">Contents (ElGamal)</h4>
+<blockquote>
+<p>Encrypted:</p>
+<p>bytes 0-527 :: AES-encrypted record (note: same size as
+[BuildRequestRecord])</p>
+<p>Unencrypted:</p>
+<p>+----+----+----+----+----+----+----+----+ |
+| + + | | + SHA-256 Hash of following bytes + | | + + | |
++----+----+----+----+----+----+----+----+ |
+random data... | ~ ~ | | + +----+ | | ret|
++----+----+----+----+----+----+----+----+</p>
+<p>bytes 0-31 :: SHA-256 Hash of bytes 32-527 bytes 32-526 :: random data
+byte 527 :: reply</p>
+<p>total length: 528</p>
+</blockquote>
+<p>[BuildRequestRecord]: /spec/i2np#struct-buildrequestrecord</p>
+<h4 id="notes-2">Notes</h4>
+<ul>
+<li>The random data field could, in the future, be used to return
+congestion or peer connectivity information back to the requestor.</li>
+<li>See the tunnel creation specification [TUNNEL-CREATION] for
+details on the reply field.</li>
+</ul>
+<h3 id="garlicclovestruct-garlicclove-garlic-cloves">GarlicClove[]{#struct-GarlicClove} {#Garlic Cloves}</h3>
+<blockquote>
+<p>Unencrypted:</p>
+<p>+----+----+----+----+----+----+----+----+ |
+Delivery Instructions | ~ ~ ~ ~ | |
++----+----+----+----+----+----+----+----+ |
+I2NP Message | ~ ~ ~ ~ | |
++----+----+----+----+----+----+----+----+ |
+Clove ID | Expiration
++----+----+----+----+----+----+----+----+ |
+Certificate |
++----+----+----+----+----+----+----+</p>
+<dl>
+<dt>Delivery Instructions :: as defined below</dt>
+<dd>Length varies but is typically 1, 33, or 37 bytes</dd>
+</dl>
+<p>I2NP Message :: Any I2NP Message</p>
+<p>Clove ID :: 4 byte [Integer]</p>
+<p>Expiration :: [Date] (8 bytes)</p>
+<p>Certificate :: Always NULL in the current implementation (3 bytes
+total, all zeroes)</p>
+</blockquote>
+<p>[Date]: /spec/common-structures#type-date [Integer]:
+/spec/common-structures#type-integer</p>
+<h4 id="notes-3">Notes</h4>
+<ul>
+<li>Cloves are never fragmented. When used in a Garlic Clove, the first
+bit of the Delivery Instructions flag byte specifies encryption. If
+this bit is 0, the clove is not encrypted. If 1, the clove is
+encrypted, and a 32 byte Session Key immediately follows the flag
+byte. Clove encryption is not fully implemented.</li>
+<li>See also the garlic routing specification [GARLICSPEC].</li>
+<li>Maximum length is a function of the total length of all the cloves
+and the maximum length of the GarlicMessage.</li>
+<li>In the future, the certificate could possibly be used for a HashCash
+to &quot;pay&quot; for the routing.</li>
+<li>The message can be any I2NP message (including a GarlicMessage,
+although that is not used in practice). The messages used in
+practice are DataMessage, DeliveryStatusMessage, and
+DatabaseStoreMessage.</li>
+<li>The Clove ID is generally set to a random number on transmit and is
+checked for duplicates on receive (same message ID space as
+top-level Message IDs)</li>
+</ul>
+<h3 id="struct-GarlicCloveDeliveryInstructions">Garlic Clove Delivery Instructions</h3>
+<p>This specification is for Delivery Instructions inside Garlic Cloves
+only. Note that &quot;Delivery Instructions&quot; are also used inside Tunnel
+Messages, where the format is significantly different. See the Tunnel
+Message documentation [TMDI] for details. Do NOT use the following
+specification for Tunnel Message Delivery Instructions!</p>
+<blockquote>
+<p>+----+----+----+----+----+----+----+----+ |
++----+ + | | + Session Key (optional) + | | + + | | +
++----+----+----+----+--------------+ | | |
++----+ + | | + To Hash (optional) + | | + + | | +
++----+----+----+----+--------------+ | |
+Tunnel ID (opt) | Delay (opt)
++----+----+----+----+----+----+----+----+ |
++----+</p>
+<dl>
+<dt>flag ::</dt>
+<dd>1 byte Bit order: 76543210 bit 7: encrypted? Unimplemented, always
+0 If 1, a 32-byte encryption session key is included bits 6-5:
+delivery type 0x0 = LOCAL, 0x01 = DESTINATION, 0x02 = ROUTER, 0x03
+= TUNNEL bit 4: delay included? Not fully implemented, always 0 If
+1, four delay bytes are included bits 3-0: reserved, set to 0 for
+compatibility with future uses</dd>
+<dt>Session Key ::</dt>
+<dd>32 bytes Optional, present if encrypt flag bit is set.
+Unimplemented, never set, never present.</dd>
+<dt>To Hash ::</dt>
+<dd>32 bytes Optional, present if delivery type is DESTINATION,
+ROUTER, or TUNNEL If DESTINATION, the SHA256 Hash of the
+destination If ROUTER, the SHA256 Hash of the router If TUNNEL,
+the SHA256 Hash of the gateway router</dd>
+<dt>Tunnel ID :: [TunnelId]</dt>
+<dd>4 bytes Optional, present if delivery type is TUNNEL The
+destination tunnel ID, nonzero</dd>
+<dt>Delay :: [Integer]</dt>
+<dd>4 bytes Optional, present if delay included flag is set Not fully
+implemented. Specifies the delay in seconds.</dd>
+<dt>Total length: Typical length is:</dt>
+<dd>1 byte for LOCAL delivery; 33 bytes for ROUTER / DESTINATION
+delivery; 37 bytes for TUNNEL delivery</dd>
+</dl>
+</blockquote>
+<p>[Integer]: /spec/common-structures#type-integer [TunnelId]:
+/spec/common-structures#type-tunnelid</p>
+<h2 id="messages">Messages</h2>
+<p>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| Message                                               | Type    |
++=======================================================+=========+
+| <a href="#databasestore">DatabaseStore</a>                       | &gt; 1     |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| <a href="#databaselookup">DatabaseLookup</a>                     | &gt; 2     |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| <a href="#databasesearchreply">DatabaseSearchReply</a>           | &gt; 3     |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| <a href="#deliverystatus">DeliveryStatus</a>                     | &gt; 10    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| <a href="#garlic">Garlic</a>                                     | &gt; 11    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| <a href="#tunneldata">TunnelData</a>                             | &gt; 18    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| <a href="#tunnelgateway">TunnelGateway</a>                       | &gt; 19    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| <a href="#data">Data</a>                                         | &gt; 20    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| <a href="#tunnelbuild">TunnelBuild</a>                           | &gt; 21    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| <a href="#tunnelbuildreply">TunnelBuildReply</a>                 | &gt; 22    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| <a href="#variabletunnelbuild">VariableTunnelBuild</a>           | &gt; 23    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| <a href="#variabletunnelbuildreply">VariableTunnelBuildReply</a> | &gt; 24    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| Reserved [Prop157]                                  | &gt; 25    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| Reserved [Prop157]                                  | &gt; 26    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| Reserved [Prop157]                                  | &gt; 27    |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| Reserved                                              | &gt; 0     |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| Reserved for experimental messages                    | 224-254 |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+
+| Reserved for future expansion                         | &gt; 255   |
++&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+&mdash;&mdash;&mdash;+</p>
+<h3 id="msg-DatabaseStore">DatabaseStore</h3>
+<h4 id="description-3">Description</h4>
+<p>An unsolicited database store, or the response to a successful
+<a href="#databaselookup">DatabaseLookup</a> Message</p>
+<h4 id="contents-1">Contents</h4>
+<p>An uncompressed LeaseSet, LeaseSet2, MetaLeaseSet, or EncryptedLeaseset,
+or a compressed RouterInfo</p>
+<blockquote>
+<p>with reply token:
++----+----+----+----+----+----+----+----+ |
+SHA256 Hash as key | + + | | + + | | + + | |
++----+----+----+----+----+----+----+----+
+reply token | reply_tunnelId
++----+----+----+----+----+----+----+----+ |
+SHA256 of the gateway RouterInfo | +----+ + | | + + | | + + |
+| + +----+----+----+----+----+----+----+ | |
+data ... +----+-//</p>
+<p>with reply token == 0:
++----+----+----+----+----+----+----+----+ |
+SHA256 Hash as key | + + | | + + | | + + | |
++----+----+----+----+----+----+----+----+ 0 |
+data ... +----+----+----+----+----+-//</p>
+<dl>
+<dt>key ::</dt>
+<dd>32 bytes SHA256 hash</dd>
+<dt>type ::</dt>
+<dd>1 byte type identifier bit 0: 0 [RouterInfo] 1 [LeaseSet] or
+variants listed below bits 3-1: Through release 0.9.17, must be 0
+As of release 0.9.18, ignored, reserved for future options, set to
+0 for compatibility As of release 0.9.38, the remainder of the
+type identifier: 0: [RouterInfo] or [LeaseSet] (types 0 or 1)
+1: [LeaseSet2] (type 3) 2: [EncryptedLeaseSet] (type 5) 3:
+[MetaLeaseSet] (type 7) 4-7: Unsupported, invalid bits 7-4:
+Through release 0.9.17, must be 0 As of release 0.9.18, ignored,
+reserved for future options, set to 0 for compatibility</dd>
+<dt>reply token ::</dt>
+<dd>4 bytes If greater than zero, a [DeliveryStatus] is requested
+with the Message ID set to the value of the Reply Token. A
+floodfill router is also expected to flood the data to the closest
+floodfill peers if the token is greater than zero.</dd>
+<dt>reply_tunnelId ::</dt>
+<dd>4 byte [TunnelId] Only included if reply token &gt; 0 This is the
+[TunnelId] of the inbound gateway of the tunnel the response
+should be sent to If $reply_tunnelId is zero, the reply is sent
+directy to the reply gateway router.</dd>
+<dt>reply gateway ::</dt>
+<dd>32 bytes Hash of the [RouterInfo] entry to reach the gateway
+Only included if reply token &gt; 0 If $reply_tunnelId is nonzero,
+this is the router hash of the inbound gateway of the tunnel the
+response should be sent to. If $reply_tunnelId is zero, this is
+the router hash the response should be sent to.</dd>
+<dt>data ::</dt>
+<dd><dl>
+<dt>If type == 0, data is a 2-byte [Integer] specifying the number of bytes that follow,</dt>
+<dd>
+<p>followed by a gzip-compressed [RouterInfo]. See note below.</p>
+</dd>
+</dl>
+If type == 1, data is an uncompressed [LeaseSet]. If type == 3,
+data is an uncompressed [LeaseSet2]. If type == 5, data is an
+uncompressed [EncryptedLeaseSet]. If type == 7, data is an
+uncompressed [MetaLeaseSet].</dd>
+</dl>
+</blockquote>
+<p>[TunnelId]: /spec/common-structures#type-tunnelid [LeaseSet]:
+/spec/common-structures#struct-leaseset [DeliveryStatus]:
+/spec/i2np#msg-deliverystatus [EncryptedLeaseSet]:
+/spec/common-structures#struct-encryptedleaseset [RouterInfo]:
+/spec/common-structures#struct-routerinfo [Integer]:
+/spec/common-structures#type-integer [MetaLeaseSet]:
+/spec/common-structures#struct-metaleaseset [LeaseSet2]:
+/spec/common-structures#struct-leaseset2</p>
+<h4 id="notes-4">Notes</h4>
+<ul>
+<li>For security, the reply fields are ignored if the message is
+received down a tunnel.</li>
+<li>The key is the &quot;real&quot; hash of the RouterIdentity or Destination,
+NOT the routing key.</li>
+<li>Types 3, 5, and 7 are as of release 0.9.38. See proposal 123 for
+more information. These types should only be sent to routers with
+release 0.9.38 or higher.</li>
+<li>As an optimization to reduce connections, if the type is a LeaseSet,
+the reply token is included, the reply tunnel ID is nonzero, and the
+reply gateway/tunnelID pair is found in the LeaseSet as a lease, the
+recipient may reroute the reply to any other lease in the LeaseSet.</li>
+<li>To hide the router OS and implementation, match the Java router
+implementation of gzip by setting the modification time to 0 and the
+OS byte to 0xFF, and set XFL to 0x02 (max compression, slowest
+algorithm). See RFC 1952. First 10 bytes of the compressed router
+info will be (hex): 1F 8B 08 00 00 00 00 00 02 FF</li>
+</ul>
+<h3 id="msg-DatabaseLookup">DatabaseLookup</h3>
+<h4 id="description-4">Description</h4>
+<p>A request to look up an item in the network database. The response is
+either a <a href="#databasestore">DatabaseStore</a> or a
+<a href="#databasesearchreply">DatabaseSearchReply</a>.</p>
+<h4 id="contents-2">Contents</h4>
+<blockquote>
+<p>+----+----+----+----+----+----+----+----+ |
+SHA256 hash as the key to look up | + + | | + + | | + + | |
++----+----+----+----+----+----+----+----+ |
+SHA256 hash of the routerInfo | + who is asking or the gateway to +
+| send the reply to | + + | | + + | |
++----+----+----+----+----+----+----+----+
+reply_tunnelId | size | |
++----+----+----+----+----+----+----+ + | SHA256
+of key1 to exclude | + + | | + + | | + +----+ | | |
++----+----+----+----+----+----+----+ + | SHA256
+of key2 to exclude | + + ~ ~ + +----+ | | |
++----+----+----+----+----+----+----+ + | | + +
+| Session key if reply encryption | + was requested + | | +
++----+ |
++----+----+----+----+----+----+----+----+ |
+| + + | Session tags if reply encryption | + was requested + | |</p>
+<ul>
+<li>
+<ul>
+<li>| |
++----+----+----+----+----+----+----+----+</li>
+</ul>
+</li>
+</ul>
+<dl>
+<dt>key ::</dt>
+<dd>32 bytes SHA256 hash of the object to lookup</dd>
+<dt>from ::</dt>
+<dd>32 bytes if deliveryFlag == 0, the SHA256 hash of the routerInfo
+entry this request came from (to which the reply should be sent)
+if deliveryFlag == 1, the SHA256 hash of the reply tunnel gateway
+(to which the reply should be sent)</dd>
+<dt>flags ::</dt>
+<dd>1 byte bit order: 76543210 bit 0: deliveryFlag 0 =&gt; send reply
+directly 1 =&gt; send reply to some tunnel bit 1: encryptionFlag
+through release 0.9.5, must be set to 0 as of release 0.9.6,
+ignored as of release 0.9.7: 0 =&gt; send unencrypted reply 1 =&gt;
+send AES encrypted reply using enclosed key and tag bits 3-2:
+lookup type flags through release 0.9.5, must be set to 00 as of
+release 0.9.6, ignored as of release 0.9.16: 00 =&gt; normal lookup,
+return [RouterInfo] or [LeaseSet] or [DatabaseSearchReply]
+Not recommended when sending to routers with version 0.9.16 or
+higher. 01 =&gt; LS lookup, return [LeaseSet] or
+[DatabaseSearchReply] As of release 0.9.38, may also return a
+[LeaseSet2], [MetaLeaseSet], or [EncryptedLeaseSet]. 10 =&gt;
+RI lookup, return [RouterInfo] or [DatabaseSearchReply] 11 =&gt;
+exploration lookup, return [DatabaseSearchReply] containing
+non-floodfill routers only (replaces an excludedPeer of all
+zeroes) bit 4: ECIESFlag before release 0.9.46 ignored as of
+release 0.9.46: 0 =&gt; send unencrypted or ElGamal reply 1 =&gt; send
+ChaCha/Poly encrypted reply using enclosed key (whether tag is
+enclosed depends on bit 1) bits 7-5: through release 0.9.5, must
+be set to 0 as of release 0.9.6, ignored, set to 0 for
+compatibility with future uses and with older routers</dd>
+<dt>reply_tunnelId ::</dt>
+<dd>4 byte TunnelID only included if deliveryFlag == 1 tunnelId of the
+tunnel to send the reply to, nonzero</dd>
+<dt>size ::</dt>
+<dd>2 byte [Integer] valid range: 0-512 number of peers to exclude
+from the [DatabaseSearchReply]</dd>
+<dt>excludedPeers ::</dt>
+<dd>$size SHA256 hashes of 32 bytes each (total $size*32 bytes) if
+the lookup fails, these peers are requested to be excluded from
+the list in the [DatabaseSearchReply]. if excludedPeers includes
+a hash of all zeroes, the request is exploratory, and the
+[DatabaseSearchReply] is requested to list non-floodfill routers
+only.</dd>
+<dt>reply_key ::</dt>
+<dd>32 byte key see below</dd>
+<dt>tags ::</dt>
+<dd>1 byte [Integer] valid range: 1-32 (typically 1) the number of
+reply tags that follow see below</dd>
+<dt>reply_tags ::</dt>
+<dd>one or more 8 or 32 byte session tags (typically one) see below</dd>
+</dl>
+</blockquote>
+<p>[LeaseSet]: /spec/common-structures#struct-leaseset
+[EncryptedLeaseSet]: /spec/common-structures#struct-encryptedleaseset
+[RouterInfo]: /spec/common-structures#struct-routerinfo [Integer]:
+/spec/common-structures#type-integer [MetaLeaseSet]:
+/spec/common-structures#struct-metaleaseset [DatabaseSearchReply]:
+/spec/i2np#msg-databasesearchreply [LeaseSet2]:
+/spec/common-structures#struct-leaseset2</p>
+<h4 id="reply-encryption">Reply Encryption</h4>
+<p>Flag bit 4 is used in combination with bit 1 to determine the reply
+encryption mode. Flag bit 4 must only be set when sending to routers
+with version 0.9.46 or higher. See proposals 154 and 156 for details.</p>
+<p>In the table below, &quot;DH n/a&quot; means that the reply is not encrypted.
+&quot;DH no&quot; means that the reply keys are included in the request. &quot;DH
+yes&quot; means that the reply keys are derived from the DH operation.</p>
+<p>Flag bits 4,1   From    To Router   Reply    DH?   notes</p>
+<hr>
+<p>0 0             Any     Any         no enc   n/a   no encryption
+0 1             ElG     ElG         AES      no    As of 0.9.7
+1 0             ECIES   ElG         AEAD     no    As of 0.9.46
+1 0             ECIES   ECIES       AEAD     no    As of 0.9.49
+1 1             ElG     ECIES       AES      yes   TBD
+1 1             ECIES   ECIES       AEAD     yes   TBD</p>
+<h4 id="no-encryption">No Encryption</h4>
+<p>reply_key, tags, and reply_tags are not present.</p>
+<h4 id="elg-to-elg">ElG to ElG</h4>
+<p>Supported as of 0.9.7. ElG destination sends a lookup to a ElG router.</p>
+<p>Requester key generation:</p>
+<blockquote>
+<p>reply_key :: CSRNG(32) 32 bytes random data reply_tags :: Each is
+CSRNG(32) 32 bytes random data</p>
+</blockquote>
+<p>Message format:</p>
+<blockquote>
+<dl>
+<dt>reply_key ::</dt>
+<dd>32 byte [SessionKey] big-endian only included if encryptionFlag
+== 1 AND ECIESFlag == 0, only as of release 0.9.7</dd>
+<dt>tags ::</dt>
+<dd>1 byte [Integer] valid range: 1-32 (typically 1) the number of
+reply tags that follow only included if encryptionFlag == 1 AND
+ECIESFlag == 0, only as of release 0.9.7</dd>
+<dt>reply_tags ::</dt>
+<dd>one or more 32 byte [SessionTag]s (typically one) only included
+if encryptionFlag == 1 AND ECIESFlag == 0, only as of release
+0.9.7</dd>
+</dl>
+</blockquote>
+<p>[Integer]: /spec/common-structures#type-integer [SessionKey]:
+/spec/common-structures#type-sessionkey [SessionTag]:
+/spec/common-structures#type-sessiontag</p>
+<h4 id="ecies-to-elg">ECIES to ElG</h4>
+<p>Supported as of 0.9.46. ECIES destination sends a lookup to a ElG
+router. The reply_key and reply_tags fields are redefined for an
+ECIES-encrypted reply.</p>
+<p>Requester key generation:</p>
+<blockquote>
+<p>reply_key :: CSRNG(32) 32 bytes random data reply_tags :: Each is
+CSRNG(8) 8 bytes random data</p>
+</blockquote>
+<p>Message format: Redefine reply_key and reply_tags fields as follows:</p>
+<blockquote>
+<dl>
+<dt>reply_key ::</dt>
+<dd>32 byte ECIES [SessionKey] big-endian only included if
+encryptionFlag == 0 AND ECIESFlag == 1, only as of release 0.9.46</dd>
+<dt>tags ::</dt>
+<dd>1 byte [Integer] required value: 1 the number of reply tags that
+follow only included if encryptionFlag == 0 AND ECIESFlag == 1,
+only as of release 0.9.46</dd>
+<dt>reply_tags ::</dt>
+<dd>an 8 byte ECIES [SessionTag] only included if encryptionFlag ==
+0 AND ECIESFlag == 1, only as of release 0.9.46</dd>
+</dl>
+</blockquote>
+<p>[Integer]: /spec/common-structures#type-integer [SessionKey]:
+/spec/common-structures#type-sessionkey [SessionTag]:
+/spec/common-structures#type-sessiontag</p>
+<p>The reply is an ECIES Existing Session message, as defined in [ECIES].</p>
+<h4 id="reply-format">Reply format</h4>
+<p>This is the existing session message, same as in [ECIES], copied below
+for reference.</p>
+<blockquote>
+<p>+----+----+----+----+----+----+----+----+ |
+Session Tag |
++----+----+----+----+----+----+----+----+ |
+| + Payload Section + | ChaCha20 encrypted data | ~ ~ | | + +
+| |
++----+----+----+----+----+----+----+----+ |
+Poly1305 Message Authentication Code | + (MAC) + | 16 bytes |
++----+----+----+----+----+----+----+----+</p>
+<p>Session Tag :: 8 bytes, cleartext</p>
+<p>Payload data :: remaining data minus 16 bytes</p>
+<p>MAC :: Poly1305 message authentication code, 16 bytes</p>
+</blockquote>
+<p>AEAD parameters:</p>
+<blockquote>
+<p>tag :: 8 byte reply_tag</p>
+<dl>
+<dt>k :: 32 byte session key</dt>
+<dd>The reply_key.</dd>
+</dl>
+<p>n :: 0</p>
+<p>ad :: The 8 byte reply_tag</p>
+<p>payload :: Plaintext data, the DSM or DSRM.</p>
+<p>ciphertext = ENCRYPT(k, n, payload, ad)</p>
+</blockquote>
+<h3 id="ecies-to-ecies-0949">ECIES to ECIES (0.9.49)</h3>
+<p>ECIES destination or router sends a lookup to a ECIES router. Supported
+as of 0.9.49.</p>
+<p>ECIES routers were introduced in 0.9.48, see [Prop156]. ECIES
+destinations and routers may use the same format as in the &quot;ECIES to
+ElG&quot; section above, with reply keys included in the request. The lookup
+message encryption is specified in [ECIES-ROUTERS]. The requester is
+anonymous.</p>
+<h3 id="ecies-to-ecies-future">ECIES to ECIES (future)</h3>
+<p>This option is not yet fully defined. See [Prop156].</p>
+<h4 id="notes-5">Notes</h4>
+<ul>
+<li>Prior to 0.9.16, the key may be for a RouterInfo or LeaseSet, as
+they are in the same key space, and there was no flag to request
+only a particular type of data.</li>
+<li>Encryption flag, reply key, and reply tags as of release 0.9.7.</li>
+<li>Encrypted replies are only useful when the response is through a
+tunnel.</li>
+<li>The number of included tags could be greater than one if alternative
+DHT lookup strategies (for example, recursive lookups) are
+implemented.</li>
+<li>The lookup key and exclude keys are the &quot;real&quot; hashes, NOT routing
+keys.</li>
+<li>Types 3, 5, and 7 may be returned as of release 0.9.38. See proposal
+123 for more information.</li>
+</ul>
+<h3 id="msg-DatabaseSearchReply">DatabaseSearchReply</h3>
+<h4 id="description-5">Description</h4>
+<p>The response to a failed <a href="#databaselookup">DatabaseLookup</a> Message</p>
+<h4 id="contents-3">Contents</h4>
+<p>A list of router hashes closest to the requested key</p>
+<blockquote>
+<p>+----+----+----+----+----+----+----+----+ |
+SHA256 hash as query key | + + | | + + | | + + | |
++----+----+----+----+----+----+----+----+ |
+num| peer_hashes | +----+ + | | + + | | + + | | +
++----+----+----+----+----+----+----+ | | from
+| +----+ + | | + + | | + + | | +
++----+----+----+----+----+----+----+ | |
++----+</p>
+<dl>
+<dt>key ::</dt>
+<dd>32 bytes SHA256 of the object being searched</dd>
+<dt>num ::</dt>
+<dd>1 byte [Integer] number of peer hashes that follow, 0-255</dd>
+<dt>peer_hashes ::</dt>
+<dd>$num SHA256 hashes of 32 bytes each (total $num*32 bytes)
+SHA256 of the [RouterIdentity] that the other router thinks is
+close to the key</dd>
+<dt>from ::</dt>
+<dd>32 bytes SHA256 of the [RouterInfo] of the router this reply was
+sent from</dd>
+</dl>
+</blockquote>
+<p>[Integer]: /spec/common-structures#type-integer [RouterInfo]:
+/spec/common-structures#struct-routerinfo [RouterIdentity]:
+/spec/common-structures#struct-routeridentity</p>
+<h4 id="notes-6">Notes</h4>
+<ul>
+<li>The 'from' hash is unauthenticated and cannot be trusted.</li>
+<li>The returned peer hashes are not necessarily closer to the key than
+the router being queried.</li>
+<li>Typical number of hashes returned: 3</li>
+<li>The lookup key, peer hashes, and from hash are &quot;real&quot; hashes, NOT
+routing keys.</li>
+</ul>
+<h3 id="msg-DeliveryStatus">DeliveryStatus</h3>
+<h4 id="description-6">Description</h4>
+<p>A simple message acknowledgment. Generally created by the message
+originator, and wrapped in a Garlic Message with the message itself, to
+be returned by the destination.</p>
+<h4 id="contents-4">Contents</h4>
+<p>The ID of the delivered message, and the creation or arrival time.</p>
+<blockquote>
+<hr>
+<p><a href="">msg</a>   id                       time   _stam   p</p>
+<hr>
+<dl>
+<dt>msg_id :: [Integer]</dt>
+<dd>4 bytes unique ID of the message we deliver the DeliveryStatus for
+(see [I2NPMessageHeader] for details)</dd>
+<dt>time_stamp :: [Date]</dt>
+<dd>8 bytes time the message was successfully created or delivered</dd>
+</dl>
+</blockquote>
+<p>[Date]: /spec/common-structures#type-date [Integer]:
+/spec/common-structures#type-integer [I2NPMessageHeader]:
+/spec/i2np#struct-i2npmessageheader</p>
+<h4 id="notes-7">Notes</h4>
+<ul>
+<li>It appears that the time stamp is always set by the creator to the
+current time. However there are several uses of this in the code,
+and more may be added in the future.</li>
+<li>This message is also used as a session established confirmation in
+SSU [SSU-ED]. In this case, the message ID is set to a random
+number, and the &quot;arrival time&quot; is set to the current network-wide
+ID, which is 2 (i.e. 0x0000000000000002).</li>
+</ul>
+<h3 id="msg-Garlic">Garlic</h3>
+<h4 id="description-7">Description</h4>
+<p>Used to wrap multiple encrypted I2NP Messages</p>
+<h4 id="contents-5">Contents</h4>
+<p>When decrypted, a series of [Garlic Cloves](#Garlic Cloves) and
+additional data, also known as a Clove Set.</p>
+<p>Encrypted:</p>
+<blockquote>
+<p>+----+----+----+----+----+----+----+----+ |
+length | data | +----+----+----+----+ + | | ~ ~ ~
+~ | |
++----+----+----+----+----+----+----+----+</p>
+<dl>
+<dt>length ::</dt>
+<dd>4 byte [Integer] number of bytes that follow 0 - 64 KB</dd>
+<dt>data ::</dt>
+<dd>$length bytes ElGamal encrypted data</dd>
+</dl>
+</blockquote>
+<p>[Integer]: /spec/common-structures#type-integer</p>
+<p>Decrypted data, also known as a Clove Set:</p>
+<blockquote>
+<p>+----+----+----+----+----+----+----+----+ |
+num| clove 1 | +----+ + | | ~ ~ ~ ~ | |
++----+----+----+----+----+----+----+----+ |
+clove 2 ... | ~ ~ ~ ~ | |
++----+----+----+----+----+----+----+----+ |
+Certificate | Message_ID |
++----+----+----+----+----+----+----+----+
+Expiration |
++----+----+----+----+----+----+----+</p>
+<dl>
+<dt>num ::</dt>
+<dd>1 byte [Integer] number of [GarlicClove]s to follow</dd>
+</dl>
+<p>clove :: a [GarlicClove]</p>
+<p>Certificate :: always NULL in the current implementation (3 bytes
+total, all zeroes)</p>
+<p>Message_ID :: 4 byte [Integer]</p>
+<p>Expiration :: [Date] (8 bytes)</p>
+</blockquote>
+<p>[Date]: /spec/common-structures#type-date [Integer]:
+/spec/common-structures#type-integer [GarlicClove]:
+/spec/i2np#struct-garlicclove</p>
+<h4 id="notes-8">Notes</h4>
+<ul>
+<li>When unencrypted, data contains one or more [Garlic
+Cloves](#Garlic Cloves).</li>
+<li>The AES encrypted block is padded to a minimum of 128 bytes; with
+the 32-byte Session Tag the minimum size of the encrypted message is
+160 bytes; with the 4 length bytes the minimum size of the Garlic
+Message is 164 bytes.</li>
+<li>Actual max length is less than 64 KB; see [I2NP].</li>
+<li>See also the ElGamal/AES specification [ELG-AES].</li>
+<li>See also the garlic routing specification [GARLIC].</li>
+<li>The 128 byte minimum size of the AES encrypted block is not
+currently configurable, however the minimum size of a DataMessage in
+a GarlicClove in a GarlicMessage, with overhead, is 128 bytes
+anyway. A configurable option to increase the minimum size may be
+added in the future.</li>
+<li>The message ID is generally set to a random number on transmit and
+appears to be ignored on receive.</li>
+<li>In the future, the certificate could possibly be used for a HashCash
+to &quot;pay&quot; for the routing.</li>
+</ul>
+<h3 id="msg-TunnelData">TunnelData</h3>
+<h4 id="description-8">Description</h4>
+<p>A message sent from a tunnel's gateway or participant to the next
+participant or endpoint. The data is of fixed length, containing I2NP
+messages that are fragmented, batched, padded, and encrypted.</p>
+<h4 id="contents-6">Contents</h4>
+<blockquote>
+<p>+----+----+----+----+----+----+----+----+ |
+tunnnelID | data | +----+----+----+----+ | | | ~ ~
+~ ~ | | + +----+----+----+----+ | |
++----+----+----+----+</p>
+<dl>
+<dt>tunnelId ::</dt>
+<dd>4 byte [TunnelId] identifies the tunnel this message is directed
+at nonzero</dd>
+<dt>data ::</dt>
+<dd>1024 bytes payload data.. fixed to 1024 bytes</dd>
+</dl>
+</blockquote>
+<p>[TunnelId]: /spec/common-structures#type-tunnelid</p>
+<h4 id="notes-9">Notes</h4>
+<ul>
+<li>The I2NP message ID for this message is set to a new random number
+at each hop.</li>
+<li>See also the Tunnel Message Specification [TUNNEL-MSG]</li>
+</ul>
+<h3 id="msg-TunnelGateway">TunnelGateway</h3>
+<h4 id="description-9">Description</h4>
+<p>Wraps another I2NP message to be sent into a tunnel at the tunnel's
+inbound gateway.</p>
+<h4 id="contents-7">Contents</h4>
+<blockquote>
+<p>+----+----+----+----+----+----+----+-// |
+tunnelId | length | data...
++----+----+----+----+----+----+----+-//</p>
+<dl>
+<dt>tunnelId ::</dt>
+<dd>4 byte [TunnelId] identifies the tunnel this message is directed
+at nonzero</dd>
+<dt>length ::</dt>
+<dd>2 byte [Integer] length of the payload</dd>
+<dt>data ::</dt>
+<dd>$length bytes actual payload of this message</dd>
+</dl>
+</blockquote>
+<p>[Integer]: /spec/common-structures#type-integer [TunnelId]:
+/spec/common-structures#type-tunnelid</p>
+<h4 id="notes-10">Notes</h4>
+<ul>
+<li>The payload is an I2NP message with a standard 16-byte header.</li>
+</ul>
+<h3 id="msg-Data">Data</h3>
+<h4 id="description-10">Description</h4>
+<p>Used by Garlic Messages and Garlic Cloves to wrap arbitrary data.</p>
+<h4 id="contents-8">Contents</h4>
+<p>A length Integer, followed by opaque data.</p>
+<blockquote>
+<p>+----+----+----+----+----+-//-+ | length | data...
+| +----+----+----+----+----+-//-+</p>
+<dl>
+<dt>length ::</dt>
+<dd>4 bytes length of the payload</dd>
+<dt>data ::</dt>
+<dd>$length bytes actual payload of this message</dd>
+</dl>
+</blockquote>
+<h4 id="notes-11">Notes</h4>
+<ul>
+<li>This message contains no routing information and will never be sent
+&quot;unwrapped&quot;. It is only used inside [Garlic]{.title-ref} messages.</li>
+</ul>
+<h3 id="msg-TunnelBuild">TunnelBuild</h3>
+<blockquote>
+<p>+----+----+----+----+----+----+----+----+ |
+Record 0 ... | ~ ~ ~ ~ | |
++----+----+----+----+----+----+----+----+ |
+Record 1 ... | ~ ~ ~ ~ | |
++----+----+----+----+----+----+----+----+ |
+Record 7 ... | ~ ~ ~ ~ | |
++----+----+----+----+----+----+----+----+</p>
+<p>Just 8 [BuildRequestRecord]s attached together record size: 528
+bytes total size: 8*528 = 4224 bytes</p>
+</blockquote>
+<p>[BuildRequestRecord]: /spec/i2np#struct-buildrequestrecord</p>
+<h4 id="notes-12">Notes</h4>
+<ul>
+<li>As of 0.9.48, may also contain ECIES-X25519 BuildRequestRecords, see
+[TUNNEL-CREATION-ECIES].</li>
+<li>See also the tunnel creation specification [TUNNEL-CREATION].</li>
+<li>The I2NP message ID for this message must be set according to the
+tunnel creation specification.</li>
+<li>While this message is rarely seen in today's network, having been
+replaced by the [VariableTunnelBuild]{.title-ref} message, it may
+still be used for very long tunnels, and has not been deprecated.
+Routers must implement.</li>
+</ul>
+<h3 id="msg-TunnelBuildReply">TunnelBuildReply</h3>
+<blockquote>
+<p>Same format as [TunnelBuild], with [BuildResponseRecord]s</p>
+</blockquote>
+<p>[BuildResponseRecord]: /spec/i2np#struct-buildresponserecord
+[TunnelBuild]: /spec/i2np#msg-tunnelbuild</p>
+<h4 id="notes-13">Notes</h4>
+<ul>
+<li>As of 0.9.48, may also contain ECIES-X25519 BuildResponseRecords,
+see [TUNNEL-CREATION-ECIES].</li>
+<li>See also the tunnel creation specification [TUNNEL-CREATION].</li>
+<li>The I2NP message ID for this message must be set according to the
+tunnel creation specification.</li>
+<li>While this message is rarely seen in today's network, having been
+replaced by the [VariableTunnelBuildReply]{.title-ref} message, it
+may still be used for very long tunnels, and has not been
+deprecated. Routers must implement.</li>
+</ul>
+<h3 id="msg-VariableTunnelBuild">VariableTunnelBuild</h3>
+<blockquote>
+<hr>
+<p>num   Buil   dRequ   estRe   cords   ...</p>
+<hr>
+<p>Same format as [TunnelBuild], except for the addition of a $num
+field in front and $num number of [BuildRequestRecord]s instead of
+8</p>
+<dl>
+<dt>num ::</dt>
+<dd>1 byte [Integer] Valid values: 1-8</dd>
+</dl>
+<p>record size: 528 bytes total size: 1+$num*528</p>
+</blockquote>
+<p>[Integer]: /spec/common-structures#type-integer
+[BuildRequestRecord]: /spec/i2np#struct-buildrequestrecord
+[TunnelBuild]: /spec/i2np#msg-tunnelbuild</p>
+<h4 id="notes-14">Notes</h4>
+<ul>
+<li>As of 0.9.48, may also contain ECIES-X25519 BuildRequestRecords, see
+[TUNNEL-CREATION-ECIES].</li>
+<li>This message was introduced in router version 0.7.12, and may not be
+sent to tunnel participants earlier than that version.</li>
+<li>See also the tunnel creation specification [TUNNEL-CREATION].</li>
+<li>The I2NP message ID for this message must be set according to the
+tunnel creation specification.</li>
+<li>Typical number of records in today's network is 4, for a total size
+of 2113.</li>
+</ul>
+<h3 id="msg-VariableTunnelBuildReply">VariableTunnelBuildReply</h3>
+<blockquote>
+<hr>
+<p>num   Buil   dResp   onseR   ecord   s...</p>
+<hr>
+<p>Same format as [VariableTunnelBuild], with [BuildResponseRecord]s.</p>
+</blockquote>
+<p>[BuildResponseRecord]: /spec/i2np#struct-buildresponserecord
+[VariableTunnelBuild]: /spec/i2np#msg-variabletunnelbuild</p>
+<h4 id="notes-15">Notes</h4>
+<ul>
+<li>As of 0.9.48, may also contain ECIES-X25519 BuildResponseRecords,
+see [TUNNEL-CREATION-ECIES].</li>
+<li>This message was introduced in router version 0.7.12, and may not be
+sent to tunnel participants earlier than that version.</li>
+<li>See also the tunnel creation specification [TUNNEL-CREATION].</li>
+<li>The I2NP message ID for this message must be set according to the
+tunnel creation specification.</li>
+<li>Typical number of records in today's network is 4, for a total size
+of 2113.</li>
+</ul>
+<h2 id="references">References</h2>
+<dl>
+<dt>[CRYPTO-ELG]</dt>
+<dd>
+<p><a href="https://geti2p.net/en/docs/how/cryptography#elgamal">https://geti2p.net/en/docs/how/cryptography#elgamal</a></p>
+</dd>
+<dt>[Date]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/common-structures#type-date">https://geti2p.net/spec/common-structures#type-date</a></p>
+</dd>
+<dt>[ECIES]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/ecies">https://geti2p.net/spec/ecies</a></p>
+</dd>
+<dt>[ECIES-ROUTERS]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/ecies-routers">https://geti2p.net/spec/ecies-routers</a></p>
+</dd>
+<dt>[ElG-AES]</dt>
+<dd>
+<p><a href="https://geti2p.net/en/docs/how/elgamal-aes">https://geti2p.net/en/docs/how/elgamal-aes</a></p>
+</dd>
+<dt>[GARLICSPEC]</dt>
+<dd>
+<p><a href="https://geti2p.net/en/docs/how/garlic-routing">https://geti2p.net/en/docs/how/garlic-routing</a></p>
+</dd>
+<dt>[Hash]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/common-structures#type-hash">https://geti2p.net/spec/common-structures#type-hash</a></p>
+</dd>
+<dt>[I2NP]</dt>
+<dd>
+<p><a href="https://geti2p.net/en/docs/protocol/i2np">https://geti2p.net/en/docs/protocol/i2np</a></p>
+</dd>
+<dt>[Integer]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/common-structures#type-integer">https://geti2p.net/spec/common-structures#type-integer</a></p>
+</dd>
+<dt>[NTCP2]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/ntcp2">https://geti2p.net/spec/ntcp2</a></p>
+</dd>
+<dt>[Prop156]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/proposals/156-ecies-routers">https://geti2p.net/spec/proposals/156-ecies-routers</a></p>
+</dd>
+<dt>[Prop157]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/proposals/157-new-tbm">https://geti2p.net/spec/proposals/157-new-tbm</a></p>
+</dd>
+<dt>[RouterIdentity]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/common-structures#struct-routeridentity">https://geti2p.net/spec/common-structures#struct-routeridentity</a></p>
+</dd>
+<dt>[SSU]</dt>
+<dd>
+<p><a href="https://geti2p.net/en/docs/transport/ssu">https://geti2p.net/en/docs/transport/ssu</a></p>
+</dd>
+<dt>[SSU-ED]</dt>
+<dd>
+<p><a href="https://geti2p.net/en/docs/transport/ssu#establishDirect">https://geti2p.net/en/docs/transport/ssu#establishDirect</a></p>
+</dd>
+<dt>[TMDI]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/tunnel-message#struct-tunnelmessagedeliveryinstructions">https://geti2p.net/spec/tunnel-message#struct-tunnelmessagedeliveryinstructions</a></p>
+</dd>
+<dt>[TUNNEL-CREATION]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/tunnel-creation">https://geti2p.net/spec/tunnel-creation</a></p>
+</dd>
+<dt>[TUNNEL-CREATION-ECIES]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/tunnel-creation-ecies">https://geti2p.net/spec/tunnel-creation-ecies</a></p>
+</dd>
+<dt>[TUNNEL-MSG]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/tunnel-message">https://geti2p.net/spec/tunnel-message</a></p>
+</dd>
+<dt>[TUNNEL-IMPL]</dt>
+<dd>
+<p><a href="https://geti2p.net/en/docs/tunnels/implementation">https://geti2p.net/en/docs/tunnels/implementation</a></p>
+</dd>
+<dt>[TunnelId]</dt>
+<dd>
+<p><a href="https://geti2p.net/spec/common-structures#type-tunnelid">https://geti2p.net/spec/common-structures#type-tunnelid</a></p>
+</dd>
+</dl>
+
+  </section>
+</article>
+
+</main>
+
+</div>
+
+<footer>
+  <div class="container">
+    <span class="copyright">&copy; 2021 I2P Specifications - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
+

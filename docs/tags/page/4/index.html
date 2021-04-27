@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="generator" content="Hugo 0.83.0-DEV" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/i2p.spec/css/style.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
+<link rel="alternate" href="/i2p.spec/index.xml" type="application/rss+xml" title="I2P Specifications">
+<title>I2P Specifications - I2P Specifications</title>
+</head>
+<body>
+
+<header>
+  <div class="container clearfix">
+    <a class="path" href="https://eyedeekay.github.io/i2p.spec/">[I2P Specifications]</a>
+    <span class="caret"># _</span>
+    <div class="right">
+      
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+
+
+<main role="main" class="homepage">
+
+  
+<ul>
+<li><a href="/posts/updates">Updates</a></li>
+<li><a href="/posts/common-structures">Common Structures</a></li>
+<li><a href="/posts/cryptography">Cryptography</a></li>
+<li><a href="/posts/tunnel-creation">Tunnel Creation</a></li>
+<li><a href="/posts/tunnel-message">Tunnel Message</a></li>
+<li><a href="/posts/ntcp2">NTCP2</a></li>
+<li><a href="/posts/ssu">SSU</a></li>
+<li><a href="/posts/datagrams">Datagrams</a></li>
+<li><a href="/posts/ecies">ECIES</a></li>
+<li><a href="/posts/encryptedleaseset">EncryptedLeaseSet</a></li>
+<li><a href="/posts/i2cp">I2CP</a></li>
+<li><a href="/posts/i2np">I2NP</a></li>
+<li><a href="/posts/streaming">Streaming</a></li>
+<li><a href="/posts/filter-format">Filter-Format</a></li>
+<li><a href="/posts/subscription">Subscription</a></li>
+<li><a href="/posts/b32encrypted">B32 Encrypted</a></li>
+<li><a href="/posts/blockfile">Blockfile</a></li>
+<li><a href="/posts/configuration">Configuration</a></li>
+<li><a href="/posts/ecies-routers">ECIES Routers</a></li>
+<li><a href="/posts/tunnel-creation-ecies">Tunnel Creation ECIES</a></li>
+<li><a href="/posts/geoip">GeoIP</a></li>
+<li><a href="/posts/plugin">Plugin</a></li>
+<li><a href="/posts/red25519">Red25519</a></li>
+</ul>
+
+
+  <h1 class="headline">Recent Posts</h1>
+
+  
+  <div class="article-list">
+    
+      <article class="list-item" itemscope itemtype="http://schema.org/Blog">
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/i2cp/">I2cp</a></h2>
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2021-04-27">April 27, 2021</time></span>
+
+  </div>
+  <section class="summary">
+    I2CP Specification Category: Protocols Last updated: 2020-11 Accurate for: 0.9.48
+Overview This page specified the I2P Control Protocol (I2CP), which is the interface between clients and the router. Java clients will use the I2CP client API, which implements this protocol. Non-Java clients will most likely use a higher-layer protocol such as SAM or BOB.
+The protocol is only serialized if the client and router are not in the same JVM; otherwise, I2CP message objects are passed via an internal JVM interface.  <a href="/i2p.spec/posts/i2cp/">Read More...</a>
+  </section>
+</article>
+
+    
+      <article class="list-item" itemscope itemtype="http://schema.org/Blog">
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/i2np/">I2np</a></h2>
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2021-04-27">April 27, 2021</time></span>
+
+  </div>
+  <section class="summary">
+    I2NP Specification Category: Protocols Last updated: 2021-01 Accurate for: 0.9.49
+Overview The I2P Network Protocol (I2NP), which is sandwiched between I2CP and the various I2P transport protocols, manages the routing and mixing of messages between routers, as well as the selection of what transports to use when communicating with a peer for which there are multiple common transports supported.
+Protocol Versions All routers must publish their I2NP protocol version in the &quot;router.  <a href="/i2p.spec/posts/i2np/">Read More...</a>
+  </section>
+</article>
+
+    
+      <article class="list-item" itemscope itemtype="http://schema.org/Blog">
+  <h2 class="headline" itemprop="headline"><a href="/i2p.spec/posts/ntcp2/">Ntcp2</a></h2>
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2021-04-27">April 27, 2021</time></span>
+
+  </div>
+  <section class="summary">
+    NTCP 2 Category: Transports Last updated: 2021-03 Accurate for: 0.9.50
+Overview NTCP2 is an authenticated key agreement protocol that improves the resistance of [NTCP] to various forms of automated identification and attacks.
+NTCP2 is designed for flexibility and coexistence with NTCP. It may be supported on the same port as NTCP, or a different port, or without simultaneous NTCP support at all. See the Published Router Info section below for details.  <a href="/i2p.spec/posts/ntcp2/">Read More...</a>
+  </section>
+</article>
+
+    
+  </div>
+
+  
+  <nav class="paginator">
+    
+    <a class="nav-left" href="/i2p.spec/page/3/">&lt; Prev</a>
+    
+
+    <span>4 / 8</span>
+
+    
+    <a class="nav-right" href="/i2p.spec/page/5/">Next &gt;</a>
+    
+  </nav>
+
+
+
+
+
+
+
+</main>
+
+
+</div>
+
+<footer>
+  <div class="container">
+    <span class="copyright">&copy; 2021 I2P Specifications - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
+
