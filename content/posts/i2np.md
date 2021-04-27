@@ -1,7 +1,7 @@
 ---
 title: "I2np"
 date: 2021-04-27T14:39:35-04:00
-draft: true
+draft: false
 ---
 
 I2NP Specification
