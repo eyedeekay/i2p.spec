@@ -1,10 +1,277 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on I2P Specifications</title>
-    <link>https://eyedeekay.github.io/i2p.spec/tags/</link>
-    <description>Recent content in Tags on I2P Specifications</description>
+    <title>I2P Specifications</title>
+    <link>https://eyedeekay.github.io/i2p.spec/</link>
+    <description>Recent content on I2P Specifications</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://eyedeekay.github.io/i2p.spec/tags/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Tue, 27 Apr 2021 14:39:35 -0400</lastBuildDate><atom:link href="https://eyedeekay.github.io/i2p.spec/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>B32encrypted</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/b32encrypted/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/b32encrypted/</guid>
+      <description>B32 for Encrypted Leasesets Last updated: 2020-08 Accurate for: 0.9.47
+Overview Standard Base 32 (&amp;quot;b32&amp;quot;) addresses contain the hash of the destination. This will not work for encrypted ls2 (proposal 123).
+We can&#39;t use a traditional base 32 address for an encrypted LS2 (proposal 123), as it contains only the hash of the destination. It does not provide the non-blinded public key. Clients must know the destination&#39;s public key, sig type, the blinded sig type, and an optional secret or private key to fetch and decrypt the leaseset.</description>
+    </item>
+    
+    <item>
+      <title>Blockfile</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/blockfile/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/blockfile/</guid>
+      <description>Blockfile and Hosts Database Specification Last updated: 2020-09 Accurate for: 0.9.47
+Overview This document specifies the I2P blockfile file format and the tables in the hostsdb.blockfile used by the Blockfile Naming Service [NAMING].
+The blockfile provides fast Destination lookup in a compact format. While the blockfile page overhead is substantial, the destinations are stored in binary rather than in Base 64 as in the hosts.txt format. In addition, the blockfile provides the capability of arbitrary metadata storage (such as added date, source, and comments) for each entry.</description>
+    </item>
+    
+    <item>
+      <title>Configuration</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/configuration/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/configuration/</guid>
+      <description>Configuration File Specification Last updated: March 2020 Accurate for: 0.9.45
+Overview This page provides a general specification of I2P configuration files, used by the router and various applications. It also gives an overview of the information contained in the various files, and links to detailed documentation where available.
+General Format An I2P configuration file is formatted as specified in Java [Properties] with the following exceptions:
+ Encoding must be UTF-8 Does not use or recognize any escapes, including &#39;&#39;, so lines may not be continued &#39;#&#39; or &#39;;&#39; starts a comment, but &#39;!</description>
+    </item>
+    
+    <item>
+      <title>Datagrams</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/datagrams/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/datagrams/</guid>
+      <description>Datagram Specification Category: Protocols Last updated: February 2019 Accurate for: 0.9.39
+Overview See [DATAGRAMS] for an overview of the Datagrams API.
+Non-Repliable Datagrams Non-repliable datagrams have no &#39;from&#39; address and are not authenticated. They are also called &amp;quot;raw&amp;quot; datagrams. Strictly speaking, they are not &amp;quot;datagrams&amp;quot; at all, they are just raw data. They are not handled by the datagram API. However, SAM and the I2PTunnel classes support &amp;quot;raw datagrams&amp;quot;.
+The standard I2CP protocol number for raw datagrams is PROTO_DATAGRAM_RAW (18).</description>
+    </item>
+    
+    <item>
+      <title>Ecies</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/ecies/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/ecies/</guid>
+      <description>ECIES-X25519-AEAD-Ratchet Category: Protocols Last updated: 2020-11 Accurate for: 0.9.47
+Note Network deployment and testing in progress. Subject to minor revisions. See [Prop144] for the original proposal, including background discussion and additional information.
+The following features are not implemented as of 0.9.46:
+ MessageNumbers, Options, and Termination blocks Protocol-layer responses Zero static key Multicast  Overview This is the new end-to-end encryption protocol to replace ElGamal/AES+SessionTags [ElG-AES].
+It relies on previous work as follows:</description>
+    </item>
+    
+    <item>
+      <title>Ecies Routers</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/ecies-routers/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/ecies-routers/</guid>
+      <description>ECIES-X25519 Router Messages Category: Protocols Last updated: 2021-01 Accurate for: 0.9.49
+Note Supported as of release 0.9.49. Network deployment and testing in progress. Subject to minor revision. See proposal 156 [Prop156].
+Overview This document specifies Garlic message encryption to ECIES routers, using crypto primitives introduced by [ECIES-X25519]. It is a portion of the overall proposal [Prop156] for converting routers from ElGamal to ECIES-X25519 keys. This specification is implemented as of release 0.</description>
+    </item>
+    
+    <item>
+      <title>Encryptedleaseset</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/encryptedleaseset/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/encryptedleaseset/</guid>
+      <description>Encrypted LeaseSet Specification Category: Protocols Last updated: June 2019 Accurate for: 0.9.41
+Overview This document specifies the blinding, encryption, and decryption of encrypted leasesets. For the structure of the encrypted leaseset, see the common structures specification. For backround on encrypted leasesets, see proposal 123. For usage in the netdb, see netdb documentation.
+Definitions We define the following functions corresponding to the cryptographic building blocks used for encrypted LS2:
+ CSRNG(n)  n-byte output from a cryptographically-secure random number generator.</description>
+    </item>
+    
+    <item>
+      <title>Filter Format</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/filter-format/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/filter-format/</guid>
+      <description>Access Filter Format Specification Last updated: April 2019 Accurate for: 0.9.40
+Overview The definition of a filter is a list of Strings. Blank lines and lines beginning with # are ignored. Changes in the filter definition take effect on restart of the tunnel.
+Each line can represent one of these items:
+ definition of a default threshold to apply to any remote destinations not listed in this file or any of the referenced files definition of a threshold to apply to a specific remote destination definition of a threshold to apply to remote destinations listed in a file definition of a threshold that if breached will cause the offending remote destination to be recorded in a specified file  The order of the definitions matters.</description>
+    </item>
+    
+    <item>
+      <title>Geoip</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/geoip/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/geoip/</guid>
+      <description>GeoIP File Specification Last updated: December 2013 Accurate for: 0.9.9
+Overview This page specifies the format of the various GeoIP files, used by the router to look up a country for an IP.
+Country Name (countries.txt) Format This format is easily generated from data files available from many public sources. For example:
+ $ wget http://geolite.maxmind.com/download/geoip/database/GeoIPCountryCSV.zip $ unzip GeoIPCountryCSV.zip $ cut -d, -f5,6 &amp;lt; GeoIPCountryWhois.csv | sed &#39;s/&amp;quot;//g&#39; | sort | uniq &amp;gt; countries.</description>
+    </item>
+    
+    <item>
+      <title>I2cp</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/i2cp/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/i2cp/</guid>
+      <description>I2CP Specification Category: Protocols Last updated: 2020-11 Accurate for: 0.9.48
+Overview This page specified the I2P Control Protocol (I2CP), which is the interface between clients and the router. Java clients will use the I2CP client API, which implements this protocol. Non-Java clients will most likely use a higher-layer protocol such as SAM or BOB.
+The protocol is only serialized if the client and router are not in the same JVM; otherwise, I2CP message objects are passed via an internal JVM interface.</description>
+    </item>
+    
+    <item>
+      <title>I2np</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/i2np/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/i2np/</guid>
+      <description>I2NP Specification Category: Protocols Last updated: 2021-01 Accurate for: 0.9.49
+Overview The I2P Network Protocol (I2NP), which is sandwiched between I2CP and the various I2P transport protocols, manages the routing and mixing of messages between routers, as well as the selection of what transports to use when communicating with a peer for which there are multiple common transports supported.
+Protocol Versions All routers must publish their I2NP protocol version in the &amp;quot;router.</description>
+    </item>
+    
+    <item>
+      <title>Ntcp2</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/ntcp2/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/ntcp2/</guid>
+      <description>NTCP 2 Category: Transports Last updated: 2021-03 Accurate for: 0.9.50
+Overview NTCP2 is an authenticated key agreement protocol that improves the resistance of [NTCP] to various forms of automated identification and attacks.
+NTCP2 is designed for flexibility and coexistence with NTCP. It may be supported on the same port as NTCP, or a different port, or without simultaneous NTCP support at all. See the Published Router Info section below for details.</description>
+    </item>
+    
+    <item>
+      <title>Plugin</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/plugin/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/plugin/</guid>
+      <description>Plugin Specification Last updated: November 2019 Accurate for: 0.9.43
+Overview This document specifies a .xpi2p file format (like the Firefox .xpi), but with a simple plugin.config description file instead of an XML install.rdf file. This file format is used for both initial plugin installs and plugin updates.
+In addition, this document provides a brief overview of how the router installs plugins, and policies and guidelines for plugin developers.
+The basic .</description>
+    </item>
+    
+    <item>
+      <title>Red25519</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/red25519/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/red25519/</guid>
+      <description>Red25519 Signature Scheme Last updated: 2020-08 Accurate for: 0.9.47
+Overview This document specifies a re-randomizable signature scheme suitable for creating Destinations that can be blinded. It additionally can be used to blind existing Ed25519 Destinations, with a slight reduction in efficacy.
+Motivation [Prop123] defines an encrypted LeaseSet2 format that embodies the Principle of Least Authority: each network participant is given only the information necessary for their role. In particular, an encrypted LeaseSet2 published to a floodfill does not reveal the Destination it is for, and the Leases can only be viewed by someone with prior knowledge of the Destination.</description>
+    </item>
+    
+    <item>
+      <title>Ssu</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/ssu/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/ssu/</guid>
+      <description>SSU Protocol Specification Category: Transports Last updated: 2021-04 Accurate for: 0.9.50
+Overview See [SSU] for an overview of the SSU transport.
+DH Key Exchange The initial 2048-bit DH key exchange is described on the SSU page [SSU-KEYS]. This exchange uses the same shared prime as that used for I2P&#39;s ElGamal encryption [CRYPTO-ELG].
+Message Header All UDP datagrams begin with a 16 byte MAC (Message Authentication Code) and a 16 byte IV (Initialization Vector) followed by a variable-size payload encrypted with the appropriate key.</description>
+    </item>
+    
+    <item>
+      <title>Streaming</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/streaming/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/streaming/</guid>
+      <description>Streaming Library Specification Category: Protocols Last updated: May 2020 Accurate for: 0.9.46
+Overview See [STREAMING] for an overview of the Streaming Library.
+Protocol Versions The streaming protocol does not include a version field. The versions listed below are for Java I2P. Implementations and actual crypto support may vary. There is no way to determine if the far-end supports any particular version or feature. The table below is for general guidance as to the release dates for various features.</description>
+    </item>
+    
+    <item>
+      <title>Subscription</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/subscription/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/subscription/</guid>
+      <description>Addressbook Subscription Feed Commands Last updated: 2021-01 Accurate for: 0.9.49
+Overview This specification extends the address subscription feed with commands, to enable name servers to broadcast entry updates from hostname holders. Implemented in 0.9.26, originally proposed in proposal 112.
+Motivation Previously, the hosts.txt subscription servers just sent data in a hosts.txt format, which is as follows:
+example.i2p=b64destination  There are several problems with this:
+ Hostname holders cannot update the Destination associated with their hostnames (in order to e.</description>
+    </item>
+    
+    <item>
+      <title>Tunnel Creation Ecies</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/tunnel-creation-ecies/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/tunnel-creation-ecies/</guid>
+      <description>ECIES-X25519 Tunnel Creation Category: Protocols Last updated: 2021-03 Accurate for: 0.9.49
+Overview This document specifies Tunnel Build message encryption using crypto primitives introduced by [ECIES-X25519]. It is a portion of the overall proposal [Prop156] for converting routers from ElGamal to ECIES-X25519 keys. This specification is implemented as of release 0.9.48.
+For the purposes of transitioning the network from ElGamal + AES256 to ECIES + ChaCha20, tunnels with mixed ElGamal and ECIES routers are necessary.</description>
+    </item>
+    
+    <item>
+      <title>Updates</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/updates/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:35 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/updates/</guid>
+      <description>Software Update Specification Last updated: August 2019 Accurate for: 0.9.42
+Overview I2P uses a simple, yet secure, system for automated software update. The router console periodically pulls a news file from a configurable I2P URL. There is a hardcoded backup URL pointing to the project website, in case the default project news host goes down.
+The contents of the news file are displayed on the home page of the router console.</description>
+    </item>
+    
+    <item>
+      <title>Common Structures</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/common-structures/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:34 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/common-structures/</guid>
+      <description>Common structures Specification Category: Design Last updated: 2021-04 Accurate for: 0.9.49
+This document describes some data types common to all I2P protocols, like [I2NP], [I2CP], [SSU], etc.
+Common type specification Integer Description Represents a non-negative integer.
+Contents 1 to 8 bytes in network byte order (big endian) representing an unsigned integer.
+Date Description The number of milliseconds since midnight on January 1, 1970 in the GMT timezone. If the number is 0, the date is undefined or null.</description>
+    </item>
+    
+    <item>
+      <title>Cryptography</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/cryptography/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:34 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/cryptography/</guid>
+      <description>Low-level Cryptography Specification Category: Design Last updated: 2020-09 Accurate for: 0.9.47
+Overview This page specifies the low-level details of the cryptography in I2P.
+There are several cryptographic algorithms in use within I2P. In I2P&#39;s original design, there was only one of each type - one symmetric algorithm, one asymmetric algorithm, one signing algorithm, and one hashing algorithm. There was no provision to add more algorithms or migrate to ones with more security.</description>
+    </item>
+    
+    <item>
+      <title>Tunnel Creation</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/tunnel-creation/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:34 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/tunnel-creation/</guid>
+      <description>Tunnel Creation Specification Category: Design Last updated: July 2019 Accurate for: 0.9.41
+Overview This document specifies the details of the encrypted tunnel build messages used to create tunnels using a &amp;quot;non-interactive telescoping&amp;quot; method. See the tunnel build document [TUNNEL-IMPL] for an overview of the process, including peer selection and ordering methods.
+The tunnel creation is accomplished by a single message passed along the path of peers in the tunnel, rewritten in place, and transmitted back to the tunnel creator.</description>
+    </item>
+    
+    <item>
+      <title>Tunnel Message</title>
+      <link>https://eyedeekay.github.io/i2p.spec/posts/tunnel-message/</link>
+      <pubDate>Tue, 27 Apr 2021 14:39:34 -0400</pubDate>
+      
+      <guid>https://eyedeekay.github.io/i2p.spec/posts/tunnel-message/</guid>
+      <description>Tunnel Message Specification Category: Design Last updated: 2021-01 Accurate for: 0.9.49
+Overview This document specifies the format of tunnel messages. For general information about tunnels see the tunnel documentation [TUNNEL-IMPL].
+Message preprocessing A tunnel gateway is the entrance, or first hop, of a tunnel. For an outbound tunnel, the gateway is the creator of the tunnel. For an inbound tunnel, the gateway is at the opposite end from the creator of the tunnel.</description>
+    </item>
+    
   </channel>
 </rss>
